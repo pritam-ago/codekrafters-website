@@ -6,7 +6,7 @@ import {
   useTransform,
   useMotionTemplate,
 } from "framer-motion";
-import { ReactLenis } from "lenis/dist/lenis-react";
+import { ReactLenis } from "lenis/react";
 
 const SmoothScrollLenis = () => {
   return (
