@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import Head from 'next/head';
 
+// Type definitions
 interface GSAPType {
   registerPlugin: (plugin: any) => void;
   utils: {
@@ -10,9 +11,10 @@ interface GSAPType {
   };
   fromTo: (
     target: Element,
-    fromVars: { x: string | number },
+    fromVars: { x: string | number; y?: string | number },
     toVars: {
       x: string | number;
+      y?: string | number;
       ease: string;
       scrollTrigger: {
         trigger: Element;
@@ -37,12 +39,13 @@ interface ScrollTriggerType {
   }) => void;
 }
 
-const ScrollEffect: React.FC = () => {
+const ScrollTriggerDirectionalMovement: React.FC = () => {
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cleanup: (() => void) | null = null;
 
+    // Dynamic import of GSAP to avoid SSR issues
     const loadGSAP = async () => {
       try {
         const { gsap }: { gsap: GSAPType } = await import('gsap');
@@ -50,17 +53,21 @@ const ScrollEffect: React.FC = () => {
         
         gsap.registerPlugin(ScrollTrigger);
         
+        // Configure ScrollTrigger for better performance
         ScrollTrigger.config({
           autoRefreshEvents: "visibilitychange,DOMContentLoaded,load,resize",
           ignoreMobileResize: true
         });
         
-        if (typeof window !== 'undefined' && scrollerRef.current) {
-          scrollerRef.current.scrollTo(0, 0);
+        // Reset scroll position
+        if (typeof window !== 'undefined' && document.scrollingElement) {
+          document.scrollingElement.scrollTo(0, 0);
           
+          // Wait for next frame to ensure DOM is ready
           requestAnimationFrame(() => {
             handleScroll(gsap, ScrollTrigger);
             
+            // Set up cleanup function
             cleanup = () => {
               ScrollTrigger.getAll().forEach(trigger => trigger.kill());
             };
@@ -73,6 +80,7 @@ const ScrollEffect: React.FC = () => {
 
     loadGSAP();
     
+    // Cleanup on unmount
     return () => {
       if (cleanup) {
         cleanup();
@@ -94,78 +102,138 @@ const ScrollEffect: React.FC = () => {
       const sectionElement = section as HTMLElement;
       const wrapperElement = wrapper as HTMLElement;
       
+      // Optimize performance with will-change
       gsap.set(wrapper, { willChange: 'transform' });
       
+      // Calculate movement distance more precisely
       const wrapperWidth = wrapperElement.scrollWidth;
       const sectionWidth = sectionElement.offsetWidth;
       const moveDistance = wrapperWidth - sectionWidth;
       
+      // Alternating pattern considering text as row 2:
+      // Row 0 (section 0): L→R, Row 1 (section 1): R→L, Row 2 (text): L→R, Row 3 (section 2): R→L, Row 4 (section 3): L→R
+      // So sections after text need to be offset: section 2 becomes row 3, section 3 becomes row 4
+      const rowIndex = index < 2 ? index : index + 1; // Account for text row
       const [xStart, xEnd]: [string | number, string | number] =
-        index % 2 === 0
-          ? [-moveDistance, 0]
-          : [0, -moveDistance];
+        rowIndex % 2
+          ? ['100%', -moveDistance]     // Odd row: Right to Left
+          : [-moveDistance, 0];         // Even row: Left to Right
       
       gsap.fromTo(
         wrapper,
         { x: xStart },
         {
           x: xEnd,
-          ease: "none",
+          ease: "none", // Linear easing for smooth scrubbing
           scrollTrigger: {
             trigger: section,
-            scrub: 1.5,
+            scrub: 3, // Increased from 1.2 to 3 for slower movement
             start: "top bottom",
             end: "bottom top", 
-            invalidateOnRefresh: true,
-            anticipatePin: 1,
+            invalidateOnRefresh: true, // Recalculate on resize
+            anticipatePin: 1, // Better performance for pinned elements
           },
         }
       );
     });
 
+    // Add horizontal parallax effect to the Hackverse text (treat as row index 2)
+    const hackverseText = document.querySelector('.hackverse-text');
+    if (hackverseText && hackverseText.parentElement) {
+      gsap.set(hackverseText, { willChange: 'transform' });
+      
+      // Text is row index 2, so it should go Left to Right (even index)
+      gsap.fromTo(
+        hackverseText,
+        { x: '-100%' }, // Start from left
+        {
+          x: '100%', // Move to right
+          ease: "none",
+          scrollTrigger: {
+            trigger: hackverseText.parentElement as Element,
+            scrub: 4, // Increased from 1.5 to 4 for slower text movement
+            start: "top bottom",
+            end: "bottom top",
+            invalidateOnRefresh: true,
+            anticipatePin: 1,
+          },
+        }
+      );
+    }
+
+    // Refresh ScrollTrigger after setup
     ScrollTrigger.refresh();
   };
 
-  const imageUrls = [
-    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1497449493050-aad1e7cad165?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1515237580815-1d84353d6338?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=400&h=300&fit=crop'
-  ];
+  const imageNames = ['img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg', 'img6.jpg', 'img7.jpg', 'img8.jpg'];
 
   return (
     <>
       <Head>
-        <title>Parallax </title>
+        <title>4-Line Image Parallax</title>
+        <meta name="description" content="A beautiful 4-line image parallax scroll effect" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       
       <div 
         ref={scrollerRef}
-        className="scroller h-screen overflow-auto overflow-x-hidden bg-gradient-to-br from-slate-50 to-slate-100"
+        className="scroller h-screen overflow-auto text-[12vw] overflow-x-hidden bg-orange-50"
         style={{
-          scrollBehavior: 'auto',
-          WebkitOverflowScrolling: 'touch',
+          scrollBehavior: 'auto', // Ensure smooth scrolling is controlled by GSAP
+          WebkitOverflowScrolling: 'touch', // Better iOS scrolling
         }}
       >
-        <div className="h-screen flex items-center justify-center bg-black text-white">
-          <div className="text-center">
-            <h1 className="text-6xl font-bold mb-4">Scroll down to see the magic</h1>
+        {/* Top spacing section */}
+        <div className="h-40 bg-orange-50"></div>
+        
+        {/* First image line */}
+        <section>
+          <div className="wrapper flex text-[16vh] font-medium will-change-transform">
+            {imageNames.map((imageName: string, imageIndex: number) => (
+              <img
+                key={`img-1-${imageIndex}`}
+                className="h-80 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
+                src={`/${imageName}`}
+                alt={`Image ${imageIndex + 1}`}
+                loading="lazy"
+                decoding="async"
+              />
+            ))}
           </div>
+        </section>
+
+        {/* Second image line */}
+        <section>
+          <div className="wrapper flex text-[16vh] font-medium will-change-transform">
+            {imageNames.map((imageName: string, imageIndex: number) => (
+              <img
+                key={`img-2-${imageIndex}`}
+                className="h-80 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
+                src={`/${imageName}`}
+                alt={`Image ${imageIndex + 1}`}
+                loading="lazy"
+                decoding="async"
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Hackverse text with parallax effect */}
+        <div className="h-40 bg-orange-50 relative overflow-hidden">
+          <h1 className="hackverse-text text-center text-6xl font-bold mt-10 will-change-transform">
+            Hackverse 2025
+          </h1>
         </div>
         
-        <section className="py-8">
-          <div className="wrapper flex will-change-transform">
-            {[...imageUrls, ...imageUrls].map((url, index) => (
+        {/* Third image line */}
+        <section>
+          <div className="wrapper flex text-[16vh] font-medium will-change-transform">
+            {imageNames.map((imageName: string, imageIndex: number) => (
               <img
-                key={`row-1-${index}`}
-                className="h-80 w-96 object-cover rounded-xl m-4 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 shadow-lg"
-                src={url}
-                alt={`Gallery image ${index + 1}`}
+                key={`img-3-${imageIndex}`}
+                className="h-80 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
+                src={`/${imageName}`}
+                alt={`Image ${imageIndex + 1}`}
                 loading="lazy"
                 decoding="async"
               />
@@ -173,57 +241,24 @@ const ScrollEffect: React.FC = () => {
           </div>
         </section>
 
-        <section className="py-8">
-          <div className="wrapper flex will-change-transform">
-            {[...imageUrls.reverse(), ...imageUrls].map((url, index) => (
+        {/* Fourth image line */}
+        <section>
+          <div className="wrapper flex text-[16vh] font-medium will-change-transform">
+            {imageNames.map((imageName: string, imageIndex: number) => (
               <img
-                key={`row-2-${index}`}
-                className="h-80 w-96 object-cover rounded-xl m-4 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 shadow-lg"
-                src={url}
-                alt={`Gallery image ${index + 1}`}
+                key={`img-4-${imageIndex}`}
+                className="h-80 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
+                src={`/${imageName}`}
+                alt={`Image ${imageIndex + 1}`}
                 loading="lazy"
                 decoding="async"
               />
             ))}
           </div>
         </section>
-
-        <section className="py-8">
-          <div className="wrapper flex will-change-transform">
-            {[...imageUrls.reverse(), ...imageUrls].map((url, index) => (
-              <img
-                key={`row-3-${index}`}
-                className="h-80 w-96 object-cover rounded-xl m-4 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 shadow-lg"
-                src={url}
-                alt={`Gallery image ${index + 1}`}
-                loading="lazy"
-                decoding="async"
-              />
-            ))}
-          </div>
-        </section>
-
-        <section className="py-8">
-          <div className="wrapper flex will-change-transform">
-            {[...imageUrls, ...imageUrls].map((url, index) => (
-              <img
-                key={`row-4-${index}`}
-                className="h-80 w-96 object-cover rounded-xl m-4 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 shadow-lg"
-                src={url}
-                alt={`Gallery image ${index + 1}`}
-                loading="lazy"
-                decoding="async"
-              />
-            ))}
-          </div>
-        </section>
-        
-        <div className="h-screen bg-gradient-to-t from-slate-100 to-slate-50 flex items-center justify-center">
-          
-        </div>
       </div>
     </>
   );
 };
 
-export default ScrollEffect;
+export default ScrollTriggerDirectionalMovement;
