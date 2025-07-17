@@ -91,9 +91,9 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
       case "tablet":
         return { width: "160.8px", height: "171.78px" }
       case "desktop":
-        return { width: "190px", height: "220px" }
+        return { width: "212.8px", height: "253.78px" }
       default:
-        return { width: "273px", height: "318px" }
+        return { width: "212.8px", height: "253.78px" }
     }
   }
 
@@ -270,19 +270,19 @@ const TeamHeaderComplete = () => {
   )
 
   // Mobile team member slices - organizing all 24 members
-  const mobileTeamSlices = useMemo(
-    () => ({
-      rows: [
-        TEAM_MEMBERS.slice(0, 4),   // Row 1: First 4 members
-        TEAM_MEMBERS.slice(4, 8),   // Row 2: Next 4 members
-        TEAM_MEMBERS.slice(8, 12),  // Row 3: Next 4 members
-        TEAM_MEMBERS.slice(12, 16), // Row 4: Next 4 members
-        TEAM_MEMBERS.slice(16, 20), // Row 5: Next 4 members
-        TEAM_MEMBERS.slice(20, 24), // Row 6: Last 4 members
-      ]
-    }),
-    [],
-  )
+  // const mobileTeamSlices = useMemo(
+  //   () => ({
+  //     rows: [
+  //       TEAM_MEMBERS.slice(0, 4),   // Row 1: First 4 members
+  //       TEAM_MEMBERS.slice(4, 8),   // Row 2: Next 4 members
+  //       TEAM_MEMBERS.slice(8, 12),  // Row 3: Next 4 members
+  //       TEAM_MEMBERS.slice(12, 16), // Row 4: Next 4 members
+  //       TEAM_MEMBERS.slice(16, 20), // Row 5: Next 4 members
+  //       TEAM_MEMBERS.slice(20, 24), // Row 6: Last 4 members
+  //     ]
+  //   }),
+  //   [],
+  // )
 
   const handleImageClick = (id: number) => {
     setActiveImageId(id === -1 ? null : id)
