@@ -1,4 +1,5 @@
 "use client"
+
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { useEffect, useState, useMemo, memo } from "react"
@@ -12,6 +13,8 @@ interface TeamMember {
 interface TeamMemberCardProps {
   member: TeamMember
   delay?: number
+  activeImageId?: number | null
+  onImageClick?: (id: number) => void
 }
 
 const TEAM_MEMBERS: TeamMember[] = [
@@ -42,59 +45,80 @@ const TEAM_MEMBERS: TeamMember[] = [
 ]
 
 // Memoized team member card component
-const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0 }) => {
+const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeImageId, onImageClick }) => {
   const [isMounted, setIsMounted] = useState(false)
-  const [showOverlay, setShowOverlay] = useState(false)
-  const [deviceType, setDeviceType] = useState<'mobile' | 'tablet' | 'desktop'>('desktop')
+  const [deviceType, setDeviceType] = useState<"mobile" | "tablet" | "desktop">("desktop")
+
+  // Check if this image is the active one
+  const isActive = activeImageId === member.id
 
   useEffect(() => {
     setIsMounted(true)
     // Set device type on mount and on resize
     const updateDeviceType = () => {
-      if (window.innerWidth < 640) setDeviceType('mobile')
-      else if (window.innerWidth < 1024) setDeviceType('tablet')
-      else setDeviceType('desktop')
+      if (window.innerWidth < 640) setDeviceType("mobile")
+      else if (window.innerWidth < 1024) setDeviceType("tablet")
+      else setDeviceType("desktop")
     }
     updateDeviceType()
-    window.addEventListener('resize', updateDeviceType)
-    return () => window.removeEventListener('resize', updateDeviceType)
+    window.addEventListener("resize", updateDeviceType)
+    return () => window.removeEventListener("resize", updateDeviceType)
   }, [])
 
-  const textShadowStyle = useMemo(() => ({
-    textShadow: "1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8), 1px -1px 2px rgba(0,0,0,0.8), -1px 1px 2px rgba(0,0,0,0.8)"
-  }), [])
+  const textShadowStyle = useMemo(
+    () => ({
+      textShadow:
+        "1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8), 1px -1px 2px rgba(0,0,0,0.8), -1px 1px 2px rgba(0,0,0,0.8)",
+    }),
+    [],
+  )
 
   // Toggle overlay and color on mobile/tablet
   const handleCardClick = () => {
-    if (deviceType === 'mobile' || deviceType === 'tablet') {
-      setShowOverlay((prev) => !prev)
+    if (deviceType === "mobile" || deviceType === "tablet") {
+      if (onImageClick) {
+        // If clicking the same image, toggle it off, otherwise set it as active
+        onImageClick(isActive ? -1 : member.id)
+      }
+    }
+  }
+
+  // Get container dimensions based on device type
+  const getContainerStyle = () => {
+    switch (deviceType) {
+      case "mobile":
+        return { width: "200px", height: "200px" }
+      case "tablet":
+        return { width: "160.8px", height: "171.78px" }
+      case "desktop":
+        return { width: "190px", height: "220px" }
+      default:
+        return { width: "273px", height: "318px" }
     }
   }
 
   if (!isMounted) {
     return (
       <div className="relative group">
-        <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24">
-          <div className="w-full h-full rounded-xl overflow-hidden shadow-lg bg-white relative">
+        {/* Fixed size container based on device type */}
+        <div style={getContainerStyle()}>
+          <div className="w-full h-full overflow-hidden shadow-lg bg-white relative rounded-lg">
             <Image
               src={`https://i.pravatar.cc/150?img=${member.id}`}
               alt={member.name}
-              width={150}
-              height={150}
-              className="w-full h-full object-cover grayscale transition-all duration-300"
+              fill
+              className="object-cover grayscale transition-all duration-300"
               priority={member.id <= 12}
+              sizes="(max-width: 640px) 200px, (max-width: 1024px) 160.8px, 273px"
             />
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent p-1 opacity-0 transition-opacity duration-300">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent p-2 opacity-0 transition-opacity duration-300">
               <p
-                className="font-bold text-white text-[8px] sm:text-[9px] md:text-[10px] leading-tight"
+                className="font-bold text-white text-xs leading-tight"
                 style={textShadowStyle}
               >
                 {member.name}
               </p>
-              <p
-                className="text-white text-[7px] sm:text-[8px] md:text-[9px] leading-tight"
-                style={textShadowStyle}
-              >
+              <p className="text-white text-xs leading-tight" style={textShadowStyle}>
                 {member.role}
               </p>
             </div>
@@ -105,49 +129,53 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0 }) => {
   }
 
   return (
-    <div className="relative group">
-      <motion.div
-        className="w-16 h-16 sm:w-[82px] sm:h-[82px] md:w-[98px] md:h-[98px]"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay }}
-        whileHover={deviceType === 'desktop' ? {
-          scale: 1.1,
-          transition: { duration: 0.2 },
-        } : {}}
-        onClick={handleCardClick}
-        style={{ cursor: (deviceType === 'mobile' || deviceType === 'tablet') ? 'pointer' : 'default' }}
-      >
-        <div className="w-full h-full rounded-xl overflow-hidden shadow-lg bg-white ring-2 ring-white/20 group-hover:ring-4 group-hover:ring-white/40 transition-all duration-300 relative">
+        <div className="relative group">
+          <motion.div
+            style={{
+              ...getContainerStyle(),
+              cursor: (deviceType === "mobile" || deviceType === "tablet") ? "pointer" : "default"
+            }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay }}
+            whileHover={
+              deviceType === "desktop"
+                ? { scale: 1.1, transition: { duration: 0.2 } }
+                : {}
+            }
+            onClick={handleCardClick}
+          >
+
+        <div className={`w-full h-full overflow-hidden shadow-lg bg-white ring-2 ring-white/20 group-hover:ring-4 group-hover:ring-white/40 transition-all duration-300 relative ${deviceType === "mobile" ? "rounded-lg" : ""}`}>
           <Image
             src={`https://i.pravatar.cc/150?img=${member.id}`}
             alt={member.name}
-            width={150}
-            height={150}
+            fill
             className={
-              `w-full h-full object-cover transition-all duration-300 ` +
-              (deviceType === 'desktop'
-                ? 'grayscale group-hover:grayscale-0'
-                : (showOverlay ? '' : 'grayscale'))
+              `object-cover transition-all duration-300 ` +
+              (deviceType === "desktop" ? "grayscale group-hover:grayscale-0" : isActive ? "" : "grayscale")
             }
             priority={member.id <= 12}
+            sizes="(max-width: 640px) 200px, (max-width: 1024px) 160.8px, 273px"
           />
           <div
             className={
-              `absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent p-1 transition-opacity duration-300 ` +
-              (deviceType === 'desktop'
-                ? 'opacity-0 group-hover:opacity-100'
-                : (showOverlay ? 'opacity-100' : 'opacity-0'))
+              `absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent p-1 sm:p-2 transition-opacity duration-300 ` +
+              (deviceType === "desktop" ? "opacity-0 group-hover:opacity-100" : isActive ? "opacity-100" : "opacity-0")
             }
           >
             <p
-              className="font-bold text-white text-[8px] sm:text-[9px] md:text-[10px] leading-tight"
+              className={`font-bold text-white leading-tight ${
+                deviceType === "desktop" ? "text-xs sm:text-xs md:text-sm" : deviceType === "mobile" ? "text-sm" : "text-xs"
+              }`}
               style={textShadowStyle}
             >
               {member.name}
             </p>
-            <p
-              className="text-white text-[7px] sm:text-[8px] md:text-[9px] leading-tight"
+            <p 
+              className={`text-white leading-tight ${
+                deviceType === "desktop" ? "text-xs sm:text-xs md:text-xs" : deviceType === "mobile" ? "text-xs" : "text-xs"
+              }`} 
               style={textShadowStyle}
             >
               {member.role}
@@ -185,7 +213,7 @@ const AnimatedTitle = memo<{ isMounted: boolean; className: string; delay: numbe
         {content}
       </motion.div>
     )
-  }
+  },
 )
 
 AnimatedTitle.displayName = "AnimatedTitle"
@@ -193,26 +221,21 @@ AnimatedTitle.displayName = "AnimatedTitle"
 // Memoized mobile title component
 const MobileTitle = memo<{ isMounted: boolean; delay: number }>(({ isMounted, delay }) => {
   const content = (
-    <div className="flex flex-col items-center justify-center">
-      <span className="text-sm font-bold text-gray-900 drop-shadow-lg text-center leading-tight">
+    <div className="flex flex-col items-center justify-center mb-6">
+      <span className="text-lg font-bold text-gray-900 drop-shadow-lg text-center leading-tight">
         CODE<span className="text-yellow-500">KRAFTERS</span>
       </span>
-      <span className="text-xs font-semibold text-gray-800 text-center">CORE TEAM</span>
+      <span className="text-sm font-semibold text-gray-800 text-center">CORE TEAM</span>
     </div>
   )
 
   if (!isMounted) {
-    return (
-      <div className="flex flex-col items-center justify-center" style={{ width: "calc(3 * 64px + 2 * 8px)" }}>
-        {content}
-      </div>
-    )
+    return <div className="flex flex-col items-center justify-center mb-6">{content}</div>
   }
 
   return (
     <motion.div
-      className="flex flex-col items-center justify-center"
-      style={{ width: "calc(3 * 64px + 2 * 8px)" }}
+      className="flex flex-col items-center justify-center mb-6"
       initial={{ opacity: 0, y: -30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut", delay }}
@@ -226,187 +249,234 @@ MobileTitle.displayName = "MobileTitle"
 
 const TeamHeaderComplete = () => {
   const [isMounted, setIsMounted] = useState(false)
+  const [activeImageId, setActiveImageId] = useState<number | null>(null)
 
   useEffect(() => {
     setIsMounted(true)
   }, [])
 
   // Memoized team member slices
-  const teamSlices = useMemo(() => ({
-    first5: TEAM_MEMBERS.slice(0, 5),
-    second5: TEAM_MEMBERS.slice(5, 10),
-    member10: TEAM_MEMBERS[10],
-    member11: TEAM_MEMBERS[11],
-    third5: TEAM_MEMBERS.slice(12, 17),
-    fourth5: TEAM_MEMBERS.slice(17, 22),
-    last2: TEAM_MEMBERS.slice(22, 24),
-    // Tablet slices
-    tablet1: TEAM_MEMBERS.slice(0, 4),
-    tablet2: TEAM_MEMBERS.slice(4, 8),
-    tablet3: TEAM_MEMBERS.slice(8, 12),
-    tablet4: TEAM_MEMBERS.slice(12, 16),
-    tablet5: TEAM_MEMBERS.slice(16, 20),
-    tablet6: TEAM_MEMBERS.slice(20, 24),
-  }), [])
+  const teamSlices = useMemo(
+    () => ({
+      first5: TEAM_MEMBERS.slice(0, 5),
+      second5: TEAM_MEMBERS.slice(5, 10),
+      member10: TEAM_MEMBERS[10],
+      member11: TEAM_MEMBERS[11],
+      third5: TEAM_MEMBERS.slice(12, 17),
+      fourth5: TEAM_MEMBERS.slice(17, 22),
+      last2: TEAM_MEMBERS.slice(22, 24),
+    }),
+    [],
+  )
+
+  // Mobile team member slices - organizing all 24 members
+  const mobileTeamSlices = useMemo(
+    () => ({
+      rows: [
+        TEAM_MEMBERS.slice(0, 4),   // Row 1: First 4 members
+        TEAM_MEMBERS.slice(4, 8),   // Row 2: Next 4 members
+        TEAM_MEMBERS.slice(8, 12),  // Row 3: Next 4 members
+        TEAM_MEMBERS.slice(12, 16), // Row 4: Next 4 members
+        TEAM_MEMBERS.slice(16, 20), // Row 5: Next 4 members
+        TEAM_MEMBERS.slice(20, 24), // Row 6: Last 4 members
+      ]
+    }),
+    [],
+  )
+
+  const handleImageClick = (id: number) => {
+    setActiveImageId(id === -1 ? null : id)
+  }
 
   return (
-    <header className="h-screen bg-[#FFF5D7] flex flex-col items-center justify-center px-4 py-8 overflow-hidden">
-      {/* Desktop Layout (>= 768px) */}
-      <div className="hidden md:block">
-        {/* Row 1: 5 images */}
-        <div className="flex justify-center items-center gap-4 mb-4">
-          {teamSlices.first5.map((member, index) => (
-            <TeamMemberCard key={member.id} member={member} delay={index * 0.05} />
-          ))}
-        </div>
+    <div className="min-h-screen bg-[#FFF5D7] flex flex-col items-center justify-start px-4 py-8 overflow-y-auto">
+      <div className="flex-grow flex flex-col items-center justify-center">
+        {/* Desktop Layout (>= 1024px) */}
+        <div className="hidden lg:block">
+          <div className="grid grid-cols-5 gap-12 place-items-center">
+            {/* Row 1: 5 images */}
+            {teamSlices.first5.map((member, index) => (
+              <TeamMemberCard
+                key={member.id}
+                member={member}
+                delay={index * 0.05}
+                activeImageId={activeImageId}
+                onImageClick={handleImageClick}
+              />
+            ))}
 
-        {/* Row 2: 5 images */}
-        <div className="flex justify-center items-center gap-4 mb-4">
-          {teamSlices.second5.map((member, index) => (
-            <TeamMemberCard key={member.id} member={member} delay={(index + 5) * 0.05} />
-          ))}
-        </div>
+            {/* Row 2: 5 images */}
+            {teamSlices.second5.map((member, index) => (
+              <TeamMemberCard
+                key={member.id}
+                member={member}
+                delay={(index + 5) * 0.05}
+                activeImageId={activeImageId}
+                onImageClick={handleImageClick}
+              />
+            ))}
 
-        {/* Row 3: 2 images with title in middle */}
-        <div className="flex justify-center items-center gap-4 mb-4">
-          <TeamMemberCard member={teamSlices.member10} delay={1.0} />
-          
-          <div style={{ width: "calc(3 * 96px + 2 * 16px)" }}>
-            <AnimatedTitle
-              isMounted={isMounted}
-              className="text-3xl font-bold text-gray-900 drop-shadow-lg text-center"
-              delay={1.2}
+            {/* Row 3: 2 images with title in middle */}
+            <TeamMemberCard
+              member={teamSlices.member10}
+              delay={1.0}
+              activeImageId={activeImageId}
+              onImageClick={handleImageClick}
             />
-          </div>
+            <div className="col-span-3 flex justify-center">
+              <AnimatedTitle
+                isMounted={isMounted}
+                className="text-4xl lg:text-5xl font-bold text-gray-900 drop-shadow-lg text-center"
+                delay={1.2}
+              />
+            </div>
+            <TeamMemberCard
+              member={teamSlices.member11}
+              delay={1.0}
+              activeImageId={activeImageId}
+              onImageClick={handleImageClick}
+            />
 
-          <TeamMemberCard member={teamSlices.member11} delay={1.0} />
-        </div>
-
-        {/* Row 4: 5 images */}
-        <div className="flex justify-center items-center gap-4 mb-4">
-          {teamSlices.third5.map((member, index) => (
-            <TeamMemberCard key={member.id} member={member} delay={(index + 13) * 0.05} />
-          ))}
-        </div>
-
-        {/* Row 5: 5 images */}
-        <div className="flex justify-center items-center gap-4 mb-4">
-          {teamSlices.fourth5.map((member, index) => (
-            <TeamMemberCard key={member.id} member={member} delay={(index + 18) * 0.05} />
-          ))}
-        </div>
-
-        {/* Row 6: 2 images only */}
-        <div className="flex justify-center items-center gap-4">
-          <div className="flex gap-4" style={{ width: "calc(5 * 96px + 4 * 16px)", justifyContent: "flex-start" }}>
-            {teamSlices.last2.map((member, index) => (
-              <TeamMemberCard key={member.id} member={member} delay={(index + 23) * 0.05} />
+            {/* Row 4: 5 images */}
+            {teamSlices.third5.map((member, index) => (
+              <TeamMemberCard
+                key={member.id}
+                member={member}
+                delay={(index + 13) * 0.05}
+                activeImageId={activeImageId}
+                onImageClick={handleImageClick}
+              />
             ))}
-          </div>
-        </div>
-      </div>
 
-      {/* Tablet Layout (640px - 768px) */}
-      <div className="hidden sm:block md:hidden">
-        {/* Row 1: 4 images */}
-        <div className="flex justify-center items-center gap-3 mb-3">
-          {teamSlices.tablet1.map((member, index) => (
-            <TeamMemberCard key={member.id} member={member} delay={index * 0.05} />
-          ))}
-        </div>
-
-        {/* Row 2: 4 images */}
-        <div className="flex justify-center items-center gap-3 mb-3">
-          {teamSlices.tablet2.map((member, index) => (
-            <TeamMemberCard key={member.id} member={member} delay={(index + 4) * 0.05} />
-          ))}
-        </div>
-
-        {/* Row 3: 4 images */}
-        <div className="flex justify-center items-center gap-3 mb-4">
-          {teamSlices.tablet3.map((member, index) => (
-            <TeamMemberCard key={member.id} member={member} delay={(index + 8) * 0.05} />
-          ))}
-        </div>
-
-        {/* Title Section */}
-        <div className="mb-4">
-          <AnimatedTitle
-            isMounted={isMounted}
-            className="text-2xl font-bold text-gray-900 drop-shadow-lg text-center"
-            delay={0.8}
-          />
-        </div>
-
-        {/* Row 4: 4 images */}
-        <div className="flex justify-center items-center gap-3 mb-3">
-          {teamSlices.tablet4.map((member, index) => (
-            <TeamMemberCard key={member.id} member={member} delay={(index + 12) * 0.05} />
-          ))}
-        </div>
-
-        {/* Row 5: 4 images */}
-        <div className="flex justify-center items-center gap-3 mb-3">
-          {teamSlices.tablet5.map((member, index) => (
-            <TeamMemberCard key={member.id} member={member} delay={(index + 16) * 0.05} />
-          ))}
-        </div>
-
-        {/* Row 6: 4 images */}
-        <div className="flex justify-center items-center gap-3">
-          {teamSlices.tablet6.map((member, index) => (
-            <TeamMemberCard key={member.id} member={member} delay={(index + 20) * 0.05} />
-          ))}
-        </div>
-      </div>
-
-      {/* Mobile Layout (< 640px) */}
-      <div className="block sm:hidden">
-        {/* Row 1: 5 images */}
-        <div className="flex justify-center items-center gap-2 mb-2">
-          {teamSlices.first5.map((member, index) => (
-            <TeamMemberCard key={member.id} member={member} delay={index * 0.05} />
-          ))}
-        </div>
-
-        {/* Row 2: 5 images */}
-        <div className="flex justify-center items-center gap-2 mb-2">
-          {teamSlices.second5.map((member, index) => (
-            <TeamMemberCard key={member.id} member={member} delay={(index + 5) * 0.05} />
-          ))}
-        </div>
-
-        {/* Row 3: 2 images with title in middle */}
-        <div className="flex justify-center items-center gap-2 mb-2">
-          <TeamMemberCard member={teamSlices.member10} delay={1.0} />
-          <MobileTitle isMounted={isMounted} delay={1.2} />
-          <TeamMemberCard member={teamSlices.member11} delay={1.0} />
-        </div>
-
-        {/* Row 4: 5 images */}
-        <div className="flex justify-center items-center gap-2 mb-2">
-          {teamSlices.third5.map((member, index) => (
-            <TeamMemberCard key={member.id} member={member} delay={(index + 13) * 0.05} />
-          ))}
-        </div>
-
-        {/* Row 5: 5 images */}
-        <div className="flex justify-center items-center gap-2 mb-2">
-          {teamSlices.fourth5.map((member, index) => (
-            <TeamMemberCard key={member.id} member={member} delay={(index + 18) * 0.05} />
-          ))}
-        </div>
-
-        {/* Row 6: 2 images only */}
-        <div className="flex justify-center items-center gap-2">
-          <div className="flex gap-2" style={{ width: "calc(5 * 64px + 4 * 8px)", justifyContent: "flex-start" }}>
-            {teamSlices.last2.map((member, index) => (
-              <TeamMemberCard key={member.id} member={member} delay={(index + 23) * 0.05} />
+            {/* Row 5: 5 images */}
+            {teamSlices.fourth5.map((member, index) => (
+              <TeamMemberCard
+                key={member.id}
+                member={member}
+                delay={(index + 18) * 0.05}
+                activeImageId={activeImageId}
+                onImageClick={handleImageClick}
+              />
             ))}
+
+            {/* Row 6: 2 images centered in first 2 columns */}
+            {teamSlices.last2.map((member, index) => (
+              <TeamMemberCard
+                key={member.id}
+                member={member}
+                delay={(index + 23) * 0.05}
+                activeImageId={activeImageId}
+                onImageClick={handleImageClick}
+              />
+            ))}
+            <div className="col-span-3"></div>
+          </div>
+        </div>
+
+        {/* Tablet Layout (640px - 1024px) */}
+        <div className="hidden sm:block lg:hidden">
+          <div className="grid grid-cols-5 gap-8 place-items-center max-w-4xl mx-auto">
+            {/* Row 1: 5 images */}
+            {teamSlices.first5.map((member, index) => (
+              <TeamMemberCard
+                key={member.id}
+                member={member}
+                delay={index * 0.05}
+                activeImageId={activeImageId}
+                onImageClick={handleImageClick}
+              />
+            ))}
+
+            {/* Row 2: 5 images */}
+            {teamSlices.second5.map((member, index) => (
+              <TeamMemberCard
+                key={member.id}
+                member={member}
+                delay={(index + 5) * 0.05}
+                activeImageId={activeImageId}
+                onImageClick={handleImageClick}
+              />
+            ))}
+
+            {/* Row 3: 2 images with title in middle */}
+            <TeamMemberCard
+              member={teamSlices.member10}
+              delay={1.0}
+              activeImageId={activeImageId}
+              onImageClick={handleImageClick}
+            />
+            <div className="col-span-3 flex justify-center">
+              <AnimatedTitle
+                isMounted={isMounted}
+                className="text-2xl sm:text-3xl font-bold text-gray-900 drop-shadow-lg text-center"
+                delay={1.2}
+              />
+            </div>
+            <TeamMemberCard
+              member={teamSlices.member11}
+              delay={1.0}
+              activeImageId={activeImageId}
+              onImageClick={handleImageClick}
+            />
+
+            {/* Row 4: 5 images */}
+            {teamSlices.third5.map((member, index) => (
+              <TeamMemberCard
+                key={member.id}
+                member={member}
+                delay={(index + 13) * 0.05}
+                activeImageId={activeImageId}
+                onImageClick={handleImageClick}
+              />
+            ))}
+
+            {/* Row 5: 5 images */}
+            {teamSlices.fourth5.map((member, index) => (
+              <TeamMemberCard
+                key={member.id}
+                member={member}
+                delay={(index + 18) * 0.05}
+                activeImageId={activeImageId}
+                onImageClick={handleImageClick}
+              />
+            ))}
+
+            {/* Row 6: 2 images in first 2 columns */}
+            {teamSlices.last2.map((member, index) => (
+              <TeamMemberCard
+                key={member.id}
+                member={member}
+                delay={(index + 23) * 0.05}
+                activeImageId={activeImageId}
+                onImageClick={handleImageClick}
+              />
+            ))}
+            <div className="col-span-3"></div>
+          </div>
+        </div>
+
+        {/* Mobile Layout (< 640px) */}
+        <div className="block sm:hidden">
+          <div className="flex flex-col items-center max-w-sm mx-auto">
+            {/* Mobile Title */}
+            <MobileTitle isMounted={isMounted} delay={0.2} />
+            
+            {/* Mobile Grid - Only first 4 members vertically */}
+            <div className="flex flex-col gap-4 items-center">
+              {TEAM_MEMBERS.slice(0, 4).map((member, index) => (
+                <TeamMemberCard
+                  key={member.id}
+                  member={member}
+                  delay={index * 0.1}
+                  activeImageId={activeImageId}
+                  onImageClick={handleImageClick}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </header>
+    </div>
   )
 }
 
