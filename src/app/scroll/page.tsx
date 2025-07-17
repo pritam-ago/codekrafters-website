@@ -5,7 +5,7 @@ import Head from 'next/head';
 
 // Type definitions
 interface GSAPType {
-  registerPlugin: (plugin: any) => void;
+  registerPlugin: (...plugins: object[]) => void;
   utils: {
     toArray: (selector: string) => Element[];
   };
