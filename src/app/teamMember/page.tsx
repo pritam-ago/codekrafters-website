@@ -3,6 +3,21 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { useEffect, useState, useMemo, memo } from "react"
+import { Poppins, Orbitron } from 'next/font/google';
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400', '700'], // Specify desired weights
+  variable: '--font-poppins', // Optional: for use with CSS variables
+});
+
+const orbitron = Orbitron({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400', '700','900'], // Specify desired weights
+  variable: '--font-orbitron', // Optional: for use with CSS variables
+});
 
 interface TeamMember {
   id: number
@@ -203,10 +218,10 @@ const AnimatedTitle = memo<{ isMounted: boolean; className: string; delay: numbe
   ({ isMounted, className, delay }) => {
     const content = (
       <div className={className + " flex flex-col items-center justify-center"}>
-        <span>
+        <span className={`${orbitron.className} font-extrabold`}>
           CODE<span className="text-yellow-500">KRAFTERS</span>
         </span>
-        <span className="block">CORE TEAM</span>
+        <span className={`${poppins.className} block`}>CORE TEAM</span>
       </div>
     )
 
@@ -231,10 +246,10 @@ AnimatedTitle.displayName = "AnimatedTitle"
 const MobileTitle = memo<{ isMounted: boolean; delay: number }>(({ isMounted, delay }) => {
   const content = (
     <div className="flex flex-col items-center justify-center mb-6">
-      <span className="text-lg font-bold text-gray-900 drop-shadow-lg text-center leading-tight">
+      <span className="text-lg font-bold text-gray-900 drop-shadow-lg text-center leading-tight font-['Asimovian']">
         CODE<span className="text-yellow-500">KRAFTERS</span>
       </span>
-      <span className="text-sm font-semibold text-gray-800 text-center">CORE TEAM</span>
+      <span className="text-sm font-semibold text-gray-800 text-center font-['Asimovian']">CORE TEAM</span>
     </div>
   )
 
@@ -306,7 +321,7 @@ const TeamHeaderComplete = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFF5D7] flex flex-col items-center justify-start px-4 py-8 overflow-y-auto">
+    <div className="min-h-screen bg-[#FFFFFF] flex flex-col items-center justify-start px-4 py-8 overflow-y-auto">
       <div className="flex-grow flex flex-col items-center justify-center">
         {/* Desktop Layout (>= 1024px) */}
         <div className="hidden lg:block">
