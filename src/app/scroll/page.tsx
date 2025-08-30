@@ -142,18 +142,18 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
     if (hackverseText && hackverseText.parentElement) {
       gsap.set(hackverseText, { willChange: 'transform' });
       
-      // Text is row index 2, so it should go Left to Right (even index)
+      // Text moves from left to center and stays there
       gsap.fromTo(
         hackverseText,
         { x: '-100%' }, // Start from left
         {
-          x: '100%', // Move to right
+          x: '0%', // Move to center and stay
           ease: "none",
           scrollTrigger: {
             trigger: hackverseText.parentElement as Element,
             scrub: 4, // Increased from 1.5 to 4 for slower text movement
             start: "top bottom",
-            end: "bottom top",
+            end: "center center", // Stop at center of screen
             invalidateOnRefresh: true,
             anticipatePin: 1,
           },
@@ -164,8 +164,13 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
     // Refresh ScrollTrigger after setup
     ScrollTrigger.refresh();
   };
-
-  const imageNames = ['img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg', 'img6.jpg', 'img7.jpg', 'img8.jpg'];
+const othereventsImages = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.JPG', '7.JPG', '8.JPG', '9.JPG', '10.JPG', '11.JPG', '12.png', '13.png', '14.png'];
+  const hackverseImages = ['02-hackverse-event.jpg', '03-hackverse-event.jpg', '04-hackverse-event.jpg', '05-hackverse-event.jpg', '06-hackverse-event.jpg', '07-hackverse-event.jpg', '08-hackverse-event.jpg', '09-hackverse-event.jpg', '10-hackverse-event.jpg', '11-hackverse-event.jpg'];
+  
+  const shuffledOtherevents1 = ['1.png', '3.png', '5.png', '7.JPG', '9.JPG', '11.JPG', '13.png', '2.png', '4.png', '6.JPG', '8.JPG', '10.JPG', '12.png', '14.png'];
+  const shuffledOtherevents2 = ['14.png', '12.png', '10.JPG', '8.JPG', '6.JPG', '4.png', '2.png', '13.png', '11.JPG', '9.JPG', '7.JPG', '5.png', '3.png', '1.png'];
+  const shuffledHackverse1 = ['02-hackverse-event.jpg', '04-hackverse-event.jpg', '06-hackverse-event.jpg', '08-hackverse-event.jpg', '10-hackverse-event.jpg', '03-hackverse-event.jpg', '05-hackverse-event.jpg', '07-hackverse-event.jpg', '09-hackverse-event.jpg', '11-hackverse-event.jpg'];
+  const shuffledHackverse2 = ['11-hackverse-event.jpg', '09-hackverse-event.jpg', '07-hackverse-event.jpg', '05-hackverse-event.jpg', '03-hackverse-event.jpg', '10-hackverse-event.jpg', '08-hackverse-event.jpg', '06-hackverse-event.jpg', '04-hackverse-event.jpg', '02-hackverse-event.jpg'];
 
   return (
     <>
@@ -185,16 +190,18 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
       >
         {/* Top spacing section */}
         <div className="h-40 bg-orange-50"></div>
+
+        
         
         {/* First image line */}
         <section>
           <div className="wrapper flex text-[16vh] font-medium will-change-transform">
-            {imageNames.map((imageName: string, imageIndex: number) => (
+            {shuffledOtherevents1.map((imageName: string, imageIndex: number) => (
               <img
                 key={`img-1-${imageIndex}`}
                 className="h-80 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
-                src={`/${imageName}`}
-                alt={`Image ${imageIndex + 1}`}
+                src={`/otherevents/${imageName}`}
+                alt={`Other Event ${imageIndex + 1}`}
                 loading="lazy"
                 decoding="async"
               />
@@ -205,12 +212,12 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
         {/* Second image line */}
         <section>
           <div className="wrapper flex text-[16vh] font-medium will-change-transform">
-            {imageNames.map((imageName: string, imageIndex: number) => (
+            {shuffledOtherevents2.map((imageName: string, imageIndex: number) => (
               <img
                 key={`img-2-${imageIndex}`}
                 className="h-80 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
-                src={`/${imageName}`}
-                alt={`Image ${imageIndex + 1}`}
+                src={`/otherevents/${imageName}`}
+                alt={`Other Event ${imageIndex + 1}`}
                 loading="lazy"
                 decoding="async"
               />
@@ -228,12 +235,12 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
         {/* Third image line */}
         <section>
           <div className="wrapper flex text-[16vh] font-medium will-change-transform">
-            {imageNames.map((imageName: string, imageIndex: number) => (
+            {shuffledHackverse1.map((imageName: string, imageIndex: number) => (
               <img
                 key={`img-3-${imageIndex}`}
                 className="h-80 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
-                src={`/${imageName}`}
-                alt={`Image ${imageIndex + 1}`}
+                src={`/hackverse/${imageName}`}
+                alt={`Hackverse Event ${imageIndex + 1}`}
                 loading="lazy"
                 decoding="async"
               />
@@ -244,12 +251,12 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
         {/* Fourth image line */}
         <section>
           <div className="wrapper flex text-[16vh] font-medium will-change-transform">
-            {imageNames.map((imageName: string, imageIndex: number) => (
+            {shuffledHackverse2.map((imageName: string, imageIndex: number) => (
               <img
                 key={`img-4-${imageIndex}`}
                 className="h-80 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
-                src={`/${imageName}`}
-                alt={`Image ${imageIndex + 1}`}
+                src={`/hackverse/${imageName}`}
+                alt={`Hackverse Event ${imageIndex + 1}`}
                 loading="lazy"
                 decoding="async"
               />
