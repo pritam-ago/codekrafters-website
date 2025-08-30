@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import Image from "next/image"
 import { useEffect, useState, useMemo, memo } from "react"
-import { Poppins, Orbitron } from 'next/font/google';
+import { Poppins, Orbitron, League_Spartan } from 'next/font/google';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -17,6 +17,13 @@ const orbitron = Orbitron({
   display: 'swap',
   weight: ['400', '700','900'], // Specify desired weights
   variable: '--font-orbitron', // Optional: for use with CSS variables
+});
+
+const leagueSpartan = League_Spartan({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400', '600', '700'], // Specify desired weights
+  variable: '--font-league-spartan', // Optional: for use with CSS variables
 });
 
 interface TeamMember {
@@ -36,32 +43,40 @@ interface TeamMemberCardProps {
 
 const TEAM_MEMBERS: TeamMember[] = [
   { id: 1, name: "Jas Krrish Singh", role: "President", imagePath: "/images/PRESIDENT.png" },
-  { id: 2, name: "Srivatsa", role: "Development Head", imagePath: "/images/Srivatsav.JPG" },
-  { id: 3, name: "Nithesh", role: "Development Head", imagePath: "/images/Nithesh.jpg" },
-  { id: 4, name: "Dhanush Adithyan", role: "Cyber Security Head", imagePath: "/images/Dhanush-Adithyan .JPG" },
-  { id: 5, name: "Rishit Chanda", role: "Cyber Security Head", imagePath: "/images/Rishith.JPG" },
-  { id: 6, name: "Shashi Kumar", role: "Competitive Programming Head", imagePath: "/images/shashi.JPG" },
+  { id: 2, name: "Srivatsa", role: "Development Head", imagePath: "/images/Srivatsa.png" },
+  { id: 3, name: "Nithesh", role: "Development Head", imagePath: "/images/Nitesh.png" },
+  { id: 4, name: "Dhanush Adithyan", role: "Cyber Security Head", imagePath: "/images/Dhanush-Adithyan.png" },
+  { id: 5, name: "Rishit Chanda", role: "Cyber Security Head", imagePath: "/images/Rishit.png" },
+  { id: 6, name: "Shashi Kumar", role: "Competitive Programming Head", imagePath: "/images/shashi.png" },
   { id: 7, name: "Deepanshu Sinha", role: "Web3 Head", imagePath: "/images/Deepanshu.png" },
   { id: 8, name: "Bhavna J", role: "Creatives Head", imagePath: "/images/bhavna.png" },
   { id: 9, name: "Banu Pragathi", role: "PR & Management Head", imagePath: "/images/pragathi.png" },
-  { id: 10, name: "Kavya Reddy Ch", role: "PR & Management Head", imagePath: "/images/Kavya.jpg" },
-  { id: 11, name: "Akash R", role: "Creatives Head", imagePath: "/images/Akash.jpeg" },
-  { id: 12, name: "Hari Prasad", role: "Content Head", imagePath: "/images/Hari-prasad.JPG" },
-  { id: 13, name: "Aaron Samuel", role: "Content Head", imagePath: "/images/Aaron.jpeg" },
-  { id: 14, name: "Yashvanth MR", role: "Operations Head", imagePath: "/images/Yashwanth.jpg" },
-  { id: 15, name: "Abhinav KA", role: "Operations Head", imagePath: "/images/Abhinav.JPG" },
-  { id: 16, name: "Adithya Krishna", role: "Cybersecurity Lead", imagePath: "/images/Adithya.jpeg" },
-  { id: 17, name: "Vikas Pritam", role: "Development Lead", imagePath: "/images/Vikas.JPG" },
-  { id: 18, name: "Vinoth Anand Gani", role: "Development Lead", imagePath: "/images/VinothAnandgani.jpg" },
-  { id: 19, name: "Achyuth PV", role: "Web3 Lead", imagePath: "/images/Achyuth.jpeg" },
-  { id: 20, name: "Sanjay Ganesh K", role: "Web3 Lead", imagePath: "/images/Sanjay.jpg" },
-  { id: 21, name: "Mrudu Bhashini", role: "Competitive Programming Lead", imagePath: "/images/mrudu.jpg" },
-  { id: 22, name: "Manasa Dhavala", role: "Competitive Programming Lead", imagePath: "/images/Manasa.jpg" },
+  { id: 10, name: "Kavya Reddy Ch", role: "PR & Management Head", imagePath: "/images/Kavya.png" },
+  { id: 11, name: "Akash R", role: "Creatives Head", imagePath: "/images/Akash.png" },
+  { id: 12, name: "Hari Prasad", role: "Content Head", imagePath: "/images/Hari-prasad.png" },
+  { id: 13, name: "Aaron Samuel", role: "Content Head", imagePath: "/images/Aaron.png" },
+  { id: 14, name: "Yashvanth MR", role: "Operations Head", imagePath: "/images/Yashvanth.png" },
+  { id: 15, name: "Abhinav KA", role: "Operations Head", imagePath: "/images/Abhinav.png" },
+  { id: 16, name: "Adithya Krishna", role: "Cybersecurity Lead", imagePath: "/images/Adithya.png" },
+  { id: 17, name: "Vikas Pritam", role: "Development Lead", imagePath: "/images/Vikas.png" },
+  { id: 18, name: "Vinoth Anand Gani", role: "Development Lead", imagePath: "/images/VinothAnandgani.png" },
+  { id: 19, name: "Achyuth PV", role: "Web3 Lead", imagePath: "/images/Achyuth.png" },
+  { id: 20, name: "Sanjay Ganesh K", role: "Web3 Lead", imagePath: "/images/Sanjay.png" },
+  { id: 21, name: "Mrudu Bhashini", role: "Competitive Programming Lead", imagePath: "/images/mrudu.png" },
+  { id: 22, name: "Manasa Dhavala", role: "Competitive Programming Lead", imagePath: "/images/Manasa.png" },
   { id: 23, name: "Siddarth Kilari", role: "PR & Management Lead", imagePath: "/images/Siddharth.png" },
   { id: 24, name: "Satya Lohith", role: "PR & Management Lead", imagePath: "/images/Satya.png" },
-  { id: 25, name: "Sashank", role: "Creatives Lead", imagePath: "/images/Sashank.JPG" },
-  { id: 26, name: "Noorul Hatim", role: "Creatives Lead", imagePath: "/images/hatim.jpg" },
+  { id: 25, name: "Sashank", role: "Creatives Lead", imagePath: "/images/Sashank.png" },
+  { id: 26, name: "Noorul Hatim", role: "Creatives Lead", imagePath: "/images/hatim.png" },
 ]
+
+// Helper function to get role label
+const getRoleLabel = (role: string): string => {
+  if (role.toLowerCase().includes("president")) return "President"
+  if (role.toLowerCase().includes("lead")) return "Lead"
+  if (role.toLowerCase().includes("head")) return "Head"
+  return "Member"
+}
 
 // Memoized team member card component
 const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeImageId, onImageClick }) => {
@@ -117,23 +132,34 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
     }
   }
 
+  const roleLabel = getRoleLabel(member.role)
+  
+  // Check if this is the first member (President)
+  const isPresident = member.id === 1
+
   if (!isMounted) {
     return (
       <div className="relative group">
         {/* Fixed size container based on device type */}
         <div style={getContainerStyle()}>
-          <div className="w-full h-full overflow-hidden shadow-lg bg-white relative rounded-lg">
-            <Image
-              src={member.imagePath}
-              alt={member.name}
-              fill
-              className={
-                `object-cover transition-all duration-300 ` +
-                (deviceType === "desktop" ? "grayscale group-hover:grayscale-0" : isActive ? "" : "grayscale")
-              }
-              priority={member.id <= 12}
-              sizes="(max-width: 640px) 200px, (max-width: 1024px) 160.8px, 273px"
-            />
+          <div className="w-full h-full overflow-hidden shadow-lg bg-yellow-400 relative rounded-lg flex flex-col">
+            {/* Role label - consistent 25% for all cards */}
+            <div className="h-1/4 flex items-center justify-center bg-yellow-400">
+              <span className={`${leagueSpartan.className} text-black font-bold text-center px-2 text-2xl`}>
+                {roleLabel}
+              </span>
+            </div>
+            {/* Image container - consistent 75% for all cards */}
+            <div className="h-3/4 relative overflow-hidden">
+              <Image
+                src={member.imagePath}
+                alt={member.name}
+                fill
+                className={`object-cover transition-all duration-300 ${isPresident ? 'object-center' : 'object-top'}`}
+                priority={member.id <= 12}
+                sizes="(max-width: 640px) 200px, (max-width: 1024px) 160.8px, 273px"
+              />
+            </div>
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent p-2 opacity-0 transition-opacity duration-300">
               <p className="font-bold text-white text-xs leading-tight" style={textShadowStyle}>
                 {member.name}
@@ -161,18 +187,24 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
         whileHover={deviceType === "desktop" ? { scale: 1.1, transition: { duration: 0.2 } } : {}}
         onClick={handleCardClick}
       >
-        <div className="w-full h-full overflow-hidden shadow-lg bg-white ring-2 ring-white/20 group-hover:ring-4 group-hover:ring-white/40 transition-all duration-300 relative">
-          <Image
-  src={member.imagePath}
-  alt={member.name}
-  fill
-  className={
-    `object-cover transition-all duration-300 ` +
-    (deviceType === "desktop" ? "grayscale group-hover:grayscale-0" : isActive ? "" : "grayscale")
-  }
-  priority={member.id <= 12}
-  sizes="(max-width: 640px) 200px, (max-width: 1024px) 160.8px, 273px"
-/>
+        <div className="w-full h-full overflow-hidden shadow-lg bg-yellow-400 ring-2 ring-white/20 group-hover:ring-4 group-hover:ring-white/40 transition-all duration-300 relative flex flex-col">
+          {/* Role label - consistent 25% for all cards */}
+          <div className="h-1/4 flex items-center justify-center bg-yellow-400">
+            <span className={`${leagueSpartan.className} text-black font-bold text-center px-2 text-2xl`}>
+              {roleLabel}
+            </span>
+          </div>
+          {/* Image container - consistent 75% for all cards */}
+          <div className="h-3/4 relative overflow-hidden">
+            <Image
+              src={member.imagePath}
+              alt={member.name}
+              fill
+              className={`object-cover transition-all duration-300 ${isPresident ? 'object-center' : 'object-top'}`}
+              priority={member.id <= 12}
+              sizes="(max-width: 640px) 200px, (max-width: 1024px) 160.8px, 273px"
+            />
+          </div>
 
           <div
             className={
