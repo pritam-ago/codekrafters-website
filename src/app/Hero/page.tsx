@@ -24,14 +24,15 @@ const HeroPage = () => {
     springVars
   );
 
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1.6, 1]);
-  const outerImageOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 0.5]);
+  const outerImageOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  const whiteOpacity = useTransform(scrollYProgress, [0.8, 1], [0, 1]);
 
   return (
     <div className="h-[150vh] bg-black">
       {/* outer image */}
       <motion.div
-        className="fixed inset-0 h-screen w-screen bg-[url('/ck_group.jpeg')] bg-fixed bg-cover"
+        className="fixed inset-0 h-screen w-screen bg-[url('/CK_group.png')] bg-fixed bg-cover"
         style={{
           scale: imageScale,
           opacity: outerImageOpacity,
@@ -53,6 +54,11 @@ const HeroPage = () => {
           }}
           className="fixed inset-0 h-full w-full bg-[url('/ck_group.jpeg')] bg-fixed bg-cover"
         ></motion.div> 
+
+        <motion.div style={{
+          opacity: whiteOpacity,
+        }}
+         className="fixed inset-0 h-full w-full bg-white"></motion.div>
       </motion.div>
     </div>
   );
