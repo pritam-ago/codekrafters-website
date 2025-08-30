@@ -8,7 +8,9 @@ interface TeamMember {
   id: number
   name: string
   role: string
+  imagePath: string // Add this field
 }
+
 
 interface TeamMemberCardProps {
   member: TeamMember
@@ -18,30 +20,32 @@ interface TeamMemberCardProps {
 }
 
 const TEAM_MEMBERS: TeamMember[] = [
-  { id: 1, name: "John Smith", role: "CEO & Founder" },
-  { id: 2, name: "Sarah Johnson", role: "CTO" },
-  { id: 3, name: "Mike Chen", role: "Lead Designer" },
-  { id: 4, name: "Emma Davis", role: "Product Manager" },
-  { id: 5, name: "Alex Wilson", role: "Developer" },
-  { id: 6, name: "Lisa Brown", role: "Marketing Lead" },
-  { id: 7, name: "David Lee", role: "Backend Developer" },
-  { id: 8, name: "Amy Zhang", role: "UX Designer" },
-  { id: 9, name: "Tom Wilson", role: "DevOps Engineer" },
-  { id: 10, name: "Kate Miller", role: "Frontend Developer" },
-  { id: 11, name: "Ryan Garcia", role: "Data Scientist" },
-  { id: 12, name: "Sophie Turner", role: "QA Engineer" },
-  { id: 13, name: "James Rodriguez", role: "Sales Manager" },
-  { id: 14, name: "Olivia Kim", role: "Content Writer" },
-  { id: 15, name: "Chris Evans", role: "System Admin" },
-  { id: 16, name: "Maya Patel", role: "Business Analyst" },
-  { id: 17, name: "Jake Thompson", role: "Mobile Developer" },
-  { id: 18, name: "Rachel Green", role: "HR Manager" },
-  { id: 19, name: "Mark Johnson", role: "Security Expert" },
-  { id: 20, name: "Anna White", role: "Product Designer" },
-  { id: 21, name: "Peter Parker", role: "Full Stack Developer" },
-  { id: 22, name: "Grace Liu", role: "AI Specialist" },
-  { id: 23, name: "Sam Wilson", role: "Cloud Architect" },
-  { id: 24, name: "Zoe Adams", role: "Operations Manager" },
+  { id: 1, name: "Jas Krrish Singh", role: "President", imagePath: "/images/PRESIDENT.png" },
+  { id: 2, name: "Srivatsa", role: "Development Head", imagePath: "/images/Srivatsav.JPG" },
+  { id: 3, name: "Nithesh", role: "Development Head", imagePath: "/images/Nithesh.jpg" },
+  { id: 4, name: "Dhanush Adithyan", role: "Cyber Security Head", imagePath: "/images/Dhanush-Adithyan .JPG" },
+  { id: 5, name: "Rishit Chanda", role: "Cyber Security Head", imagePath: "/images/Rishith.JPG" },
+  { id: 6, name: "Shashi Kumar", role: "Competitive Programming Head", imagePath: "/images/shashi.JPG" },
+  { id: 7, name: "Deepanshu Sinha", role: "Web3 Head", imagePath: "/images/Deepanshu.png" },
+  { id: 8, name: "Bhavna J", role: "Creatives Head", imagePath: "/images/bhavna.png" },
+  { id: 9, name: "Banu Pragathi", role: "PR & Management Head", imagePath: "/images/pragathi.png" },
+  { id: 10, name: "Kavya Reddy Ch", role: "PR & Management Head", imagePath: "/images/Kavya.jpg" },
+  { id: 11, name: "Akash R", role: "Creatives Head", imagePath: "/images/Akash.jpeg" },
+  { id: 12, name: "Hari Prasad", role: "Content Head", imagePath: "/images/Hari-prasad.JPG" },
+  { id: 13, name: "Aaron Samuel", role: "Content Head", imagePath: "/images/Aaron.jpeg" },
+  { id: 14, name: "Yashvanth MR", role: "Operations Head", imagePath: "/images/Yashwanth.jpg" },
+  { id: 15, name: "Abhinav KA", role: "Operations Head", imagePath: "/images/Abhinav.JPG" },
+  { id: 16, name: "Adithya Krishna", role: "Cybersecurity Lead", imagePath: "/images/Adithya.jpeg" },
+  { id: 17, name: "Vikas Pritam", role: "Development Lead", imagePath: "/images/Vikas.JPG" },
+  { id: 18, name: "Vinoth Anand Gani", role: "Development Lead", imagePath: "/images/VinothAnandgani.jpg" },
+  { id: 19, name: "Achyuth PV", role: "Web3 Lead", imagePath: "/images/Achyuth.jpeg" },
+  { id: 20, name: "Sanjay Ganesh K", role: "Web3 Lead", imagePath: "/images/Sanjay.jpg" },
+  { id: 21, name: "Mrudu Bhashini", role: "Competitive Programming Lead", imagePath: "/images/mrudu.jpg" },
+  { id: 22, name: "Manasa Dhavala", role: "Competitive Programming Lead", imagePath: "/images/Manasa.jpg" },
+  { id: 23, name: "Siddarth Kilari", role: "PR & Management Lead", imagePath: "/images/Siddharth.png" },
+  { id: 24, name: "Satya Lohith", role: "PR & Management Lead", imagePath: "/images/Satya.png" },
+  { id: 25, name: "Sashank", role: "Creatives Lead", imagePath: "/images/Sashank.JPG" },
+  { id: 26, name: "Noorul Hatim", role: "Creatives Lead", imagePath: "/images/hatim.jpg" },
 ]
 
 // Memoized team member card component
@@ -60,6 +64,7 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
       else if (window.innerWidth < 1024) setDeviceType("tablet")
       else setDeviceType("desktop")
     }
+
     updateDeviceType()
     window.addEventListener("resize", updateDeviceType)
     return () => window.removeEventListener("resize", updateDeviceType)
@@ -87,7 +92,7 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
   const getContainerStyle = () => {
     switch (deviceType) {
       case "mobile":
-        return { width: "200px", height: "200px" }
+        return { width: "320px", height: "340px" } // Increased from 200px width and 280px height
       case "tablet":
         return { width: "160.8px", height: "171.78px" }
       case "desktop":
@@ -104,18 +109,18 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
         <div style={getContainerStyle()}>
           <div className="w-full h-full overflow-hidden shadow-lg bg-white relative rounded-lg">
             <Image
-              src={`https://i.pravatar.cc/150?img=${member.id}`}
+              src={member.imagePath}
               alt={member.name}
               fill
-              className="object-cover grayscale transition-all duration-300"
+              className={
+                `object-cover transition-all duration-300 ` +
+                (deviceType === "desktop" ? "grayscale group-hover:grayscale-0" : isActive ? "" : "grayscale")
+              }
               priority={member.id <= 12}
               sizes="(max-width: 640px) 200px, (max-width: 1024px) 160.8px, 273px"
             />
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent p-2 opacity-0 transition-opacity duration-300">
-              <p
-                className="font-bold text-white text-xs leading-tight"
-                style={textShadowStyle}
-              >
+              <p className="font-bold text-white text-xs leading-tight" style={textShadowStyle}>
                 {member.name}
               </p>
               <p className="text-white text-xs leading-tight" style={textShadowStyle}>
@@ -129,35 +134,31 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
   }
 
   return (
-        <div className="relative group">
-          <motion.div
-            style={{
-              ...getContainerStyle(),
-              cursor: (deviceType === "mobile" || deviceType === "tablet") ? "pointer" : "default"
-            }}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay }}
-            whileHover={
-              deviceType === "desktop"
-                ? { scale: 1.1, transition: { duration: 0.2 } }
-                : {}
-            }
-            onClick={handleCardClick}
-          >
-
-        <div className={`w-full h-full overflow-hidden shadow-lg bg-white ring-2 ring-white/20 group-hover:ring-4 group-hover:ring-white/40 transition-all duration-300 relative ${deviceType === "mobile" ? "rounded-lg" : ""}`}>
+    <div className="relative group">
+      <motion.div
+        style={{
+          ...getContainerStyle(),
+          cursor: deviceType === "mobile" || deviceType === "tablet" ? "pointer" : "default",
+        }}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay }}
+        whileHover={deviceType === "desktop" ? { scale: 1.1, transition: { duration: 0.2 } } : {}}
+        onClick={handleCardClick}
+      >
+        <div className="w-full h-full overflow-hidden shadow-lg bg-white ring-2 ring-white/20 group-hover:ring-4 group-hover:ring-white/40 transition-all duration-300 relative">
           <Image
-            src={`https://i.pravatar.cc/150?img=${member.id}`}
-            alt={member.name}
-            fill
-            className={
-              `object-cover transition-all duration-300 ` +
-              (deviceType === "desktop" ? "grayscale group-hover:grayscale-0" : isActive ? "" : "grayscale")
-            }
-            priority={member.id <= 12}
-            sizes="(max-width: 640px) 200px, (max-width: 1024px) 160.8px, 273px"
-          />
+  src={member.imagePath}
+  alt={member.name}
+  fill
+  className={
+    `object-cover transition-all duration-300 ` +
+    (deviceType === "desktop" ? "grayscale group-hover:grayscale-0" : isActive ? "" : "grayscale")
+  }
+  priority={member.id <= 12}
+  sizes="(max-width: 640px) 200px, (max-width: 1024px) 160.8px, 273px"
+/>
+
           <div
             className={
               `absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent p-1 sm:p-2 transition-opacity duration-300 ` +
@@ -166,16 +167,24 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
           >
             <p
               className={`font-bold text-white leading-tight ${
-                deviceType === "desktop" ? "text-xs sm:text-xs md:text-sm" : deviceType === "mobile" ? "text-sm" : "text-xs"
+                deviceType === "desktop"
+                  ? "text-xs sm:text-xs md:text-sm"
+                  : deviceType === "mobile"
+                    ? "text-sm"
+                    : "text-xs"
               }`}
               style={textShadowStyle}
             >
               {member.name}
             </p>
-            <p 
+            <p
               className={`text-white leading-tight ${
-                deviceType === "desktop" ? "text-xs sm:text-xs md:text-xs" : deviceType === "mobile" ? "text-xs" : "text-xs"
-              }`} 
+                deviceType === "desktop"
+                  ? "text-xs sm:text-xs md:text-xs"
+                  : deviceType === "mobile"
+                    ? "text-xs"
+                    : "text-xs"
+              }`}
               style={textShadowStyle}
             >
               {member.role}
@@ -250,9 +259,19 @@ MobileTitle.displayName = "MobileTitle"
 const TeamHeaderComplete = () => {
   const [isMounted, setIsMounted] = useState(false)
   const [activeImageId, setActiveImageId] = useState<number | null>(null)
+  const [currentGroupIndex, setCurrentGroupIndex] = useState(0)
 
   useEffect(() => {
     setIsMounted(true)
+  }, [])
+
+  // Mobile group rotation effect
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentGroupIndex((prevIndex) => (prevIndex + 1) % 6) // 6 groups total (24 members / 4 per group)
+    }, 6000) // Change every 6 seconds
+
+    return () => clearInterval(interval)
   }, [])
 
   // Memoized team member slices
@@ -264,25 +283,23 @@ const TeamHeaderComplete = () => {
       member11: TEAM_MEMBERS[11],
       third5: TEAM_MEMBERS.slice(12, 17),
       fourth5: TEAM_MEMBERS.slice(17, 22),
-      last2: TEAM_MEMBERS.slice(22, 24),
+      last2: TEAM_MEMBERS.slice(22, 26),
     }),
     [],
   )
 
-  // Mobile team member slices - organizing all 24 members
-  // const mobileTeamSlices = useMemo(
-  //   () => ({
-  //     rows: [
-  //       TEAM_MEMBERS.slice(0, 4),   // Row 1: First 4 members
-  //       TEAM_MEMBERS.slice(4, 8),   // Row 2: Next 4 members
-  //       TEAM_MEMBERS.slice(8, 12),  // Row 3: Next 4 members
-  //       TEAM_MEMBERS.slice(12, 16), // Row 4: Next 4 members
-  //       TEAM_MEMBERS.slice(16, 20), // Row 5: Next 4 members
-  //       TEAM_MEMBERS.slice(20, 24), // Row 6: Last 4 members
-  //     ]
-  //   }),
-  //   [],
-  // )
+  // Mobile team member groups - organizing all 24 members into 6 groups of 4
+  const mobileTeamGroups = useMemo(
+    () => [
+      TEAM_MEMBERS.slice(0, 4), // Group 1: Members 1-4
+      TEAM_MEMBERS.slice(4, 8), // Group 2: Members 5-8
+      TEAM_MEMBERS.slice(8, 12), // Group 3: Members 9-12
+      TEAM_MEMBERS.slice(12, 16), // Group 4: Members 13-16
+      TEAM_MEMBERS.slice(16, 20), // Group 5: Members 17-20
+      TEAM_MEMBERS.slice(20, 26), // Group 6: Members 21-24
+    ],
+    [],
+  )
 
   const handleImageClick = (id: number) => {
     setActiveImageId(id === -1 ? null : id)
@@ -304,7 +321,6 @@ const TeamHeaderComplete = () => {
                 onImageClick={handleImageClick}
               />
             ))}
-
             {/* Row 2: 5 images */}
             {teamSlices.second5.map((member, index) => (
               <TeamMemberCard
@@ -315,7 +331,6 @@ const TeamHeaderComplete = () => {
                 onImageClick={handleImageClick}
               />
             ))}
-
             {/* Row 3: 2 images with title in middle */}
             <TeamMemberCard
               member={teamSlices.member10}
@@ -336,7 +351,6 @@ const TeamHeaderComplete = () => {
               activeImageId={activeImageId}
               onImageClick={handleImageClick}
             />
-
             {/* Row 4: 5 images */}
             {teamSlices.third5.map((member, index) => (
               <TeamMemberCard
@@ -347,7 +361,6 @@ const TeamHeaderComplete = () => {
                 onImageClick={handleImageClick}
               />
             ))}
-
             {/* Row 5: 5 images */}
             {teamSlices.fourth5.map((member, index) => (
               <TeamMemberCard
@@ -358,7 +371,6 @@ const TeamHeaderComplete = () => {
                 onImageClick={handleImageClick}
               />
             ))}
-
             {/* Row 6: 2 images centered in first 2 columns */}
             {teamSlices.last2.map((member, index) => (
               <TeamMemberCard
@@ -386,7 +398,6 @@ const TeamHeaderComplete = () => {
                 onImageClick={handleImageClick}
               />
             ))}
-
             {/* Row 2: 5 images */}
             {teamSlices.second5.map((member, index) => (
               <TeamMemberCard
@@ -397,7 +408,6 @@ const TeamHeaderComplete = () => {
                 onImageClick={handleImageClick}
               />
             ))}
-
             {/* Row 3: 2 images with title in middle */}
             <TeamMemberCard
               member={teamSlices.member10}
@@ -418,7 +428,6 @@ const TeamHeaderComplete = () => {
               activeImageId={activeImageId}
               onImageClick={handleImageClick}
             />
-
             {/* Row 4: 5 images */}
             {teamSlices.third5.map((member, index) => (
               <TeamMemberCard
@@ -429,7 +438,6 @@ const TeamHeaderComplete = () => {
                 onImageClick={handleImageClick}
               />
             ))}
-
             {/* Row 5: 5 images */}
             {teamSlices.fourth5.map((member, index) => (
               <TeamMemberCard
@@ -440,7 +448,6 @@ const TeamHeaderComplete = () => {
                 onImageClick={handleImageClick}
               />
             ))}
-
             {/* Row 6: 2 images in first 2 columns */}
             {teamSlices.last2.map((member, index) => (
               <TeamMemberCard
@@ -460,16 +467,39 @@ const TeamHeaderComplete = () => {
           <div className="flex flex-col items-center max-w-sm mx-auto">
             {/* Mobile Title */}
             <MobileTitle isMounted={isMounted} delay={0.2} />
-            
-            {/* Mobile Grid - Only first 4 members vertically */}
-            <div className="flex flex-col gap-4 items-center">
-              {TEAM_MEMBERS.slice(0, 4).map((member, index) => (
+
+            {/* Mobile Grid - Rotating groups of 4 members vertically */}
+            <motion.div
+              key={currentGroupIndex}
+              className="flex flex-col gap-6 items-center"
+              initial={{ opacity: 0, y: 30, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -30, scale: 0.95 }}
+              transition={{
+                duration: 0.8,
+                ease: [0.25, 0.46, 0.45, 0.94],
+                staggerChildren: 0.1,
+              }}
+            >
+              {mobileTeamGroups[currentGroupIndex].map((member, index) => (
                 <TeamMemberCard
                   key={member.id}
                   member={member}
                   delay={index * 0.1}
                   activeImageId={activeImageId}
                   onImageClick={handleImageClick}
+                />
+              ))}
+            </motion.div>
+
+            {/* Group indicator dots */}
+            <div className="flex gap-2 mt-6">
+              {mobileTeamGroups.map((_, index) => (
+                <div
+                  key={index}
+                  className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                    index === currentGroupIndex ? "bg-yellow-500" : "bg-gray-400"
+                  }`}
                 />
               ))}
             </div>
