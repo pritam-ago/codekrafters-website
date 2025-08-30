@@ -108,6 +108,18 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
     [],
   )
 
+  // Role label styling with League Spartan, larger font size, and reduced letter spacing to match Canva
+  const roleLabelStyle = useMemo(
+    () => ({
+      fontSize: '25px', // Very slight increase from 24px
+      letterSpacing: '1.5px', // Slightly reduced from 2px
+      lineHeight: '1.63', // Line spacing 1.63 from Canva
+      textTransform: 'uppercase' as const, // Ensure uppercase like in Canva
+      fontWeight: '700', // Make it bolder to match Canva appearance
+    }),
+    [],
+  )
+
   // Toggle overlay and color on mobile/tablet
   const handleCardClick = () => {
     if (deviceType === "mobile" || deviceType === "tablet") {
@@ -145,7 +157,10 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
           <div className="w-full h-full overflow-hidden shadow-lg bg-yellow-400 relative rounded-lg flex flex-col">
             {/* Role label - consistent 25% for all cards */}
             <div className="h-1/4 flex items-center justify-center bg-yellow-400">
-              <span className={`${leagueSpartan.className} text-black font-bold text-center px-2 text-2xl`}>
+              <span 
+                className={`${leagueSpartan.className} text-black font-bold text-center px-2`}
+                style={roleLabelStyle}
+              >
                 {roleLabel}
               </span>
             </div>
@@ -190,7 +205,10 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
         <div className="w-full h-full overflow-hidden shadow-lg bg-yellow-400 ring-2 ring-white/20 group-hover:ring-4 group-hover:ring-white/40 transition-all duration-300 relative flex flex-col">
           {/* Role label - consistent 25% for all cards */}
           <div className="h-1/4 flex items-center justify-center bg-yellow-400">
-            <span className={`${leagueSpartan.className} text-black font-bold text-center px-2 text-2xl`}>
+            <span 
+              className={`${leagueSpartan.className} text-black font-bold text-center px-2`}
+              style={roleLabelStyle}
+            >
               {roleLabel}
             </span>
           </div>
@@ -250,7 +268,7 @@ const AnimatedTitle = memo<{ isMounted: boolean; className: string; delay: numbe
   ({ isMounted, className, delay }) => {
     const content = (
       <div className={className + " flex flex-col items-center justify-center"}>
-        <span className={`${orbitron.className} font-extrabold`}>
+        <span className={`${poppins.className} font-extrabold`}>
           CODE<span className="text-yellow-500">KRAFTERS</span>
         </span>
         <span className={`${poppins.className} block`}>CORE TEAM</span>
