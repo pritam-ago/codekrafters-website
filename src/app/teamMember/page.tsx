@@ -100,13 +100,13 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
     return () => window.removeEventListener("resize", updateDeviceType)
   }, [])
 
-  const textShadowStyle = useMemo(
-    () => ({
-      textShadow:
-        "1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8), 1px -1px 2px rgba(0,0,0,0.8), -1px 1px 2px rgba(0,0,0,0.8)",
-    }),
-    [],
-  )
+  // const textShadowStyle = useMemo(
+  //   () => ({
+  //     textShadow:
+  //       "1px 1px 2px rgba(0,0,0,0.8), -1px -1px 2px rgba(0,0,0,0.8), 1px -1px 2px rgba(0,0,0,0.8), -1px 1px 2px rgba(0,0,0,0.8)",
+  //   }),
+  //   [],
+  // )
 
   // Role label styling with League Spartan, larger font size, and reduced letter spacing to match Canva
   const roleLabelStyle = useMemo(
@@ -176,10 +176,10 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
               />
             </div>
             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/30 to-transparent p-2 opacity-0 transition-opacity duration-300">
-              <p className="font-bold text-white text-xs leading-tight" style={textShadowStyle}>
+              <p className="font-bold text-white text-sm leading-tight" >
                 {member.name}
               </p>
-              <p className="text-white text-xs leading-tight" style={textShadowStyle}>
+              <p className="text-white text-sm leading-tight">
                 {member.role}
               </p>
             </div>
@@ -238,7 +238,7 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
                     ? "text-sm"
                     : "text-xs"
               }`}
-              style={textShadowStyle}
+              // style={textShadowStyle}
             >
               {member.name}
             </p>
@@ -250,7 +250,7 @@ const TeamMemberCard = memo<TeamMemberCardProps>(({ member, delay = 0, activeIma
                     ? "text-xs"
                     : "text-xs"
               }`}
-              style={textShadowStyle}
+              // style={textShadowStyle}
             >
               {member.role}
             </p>
@@ -268,7 +268,7 @@ const AnimatedTitle = memo<{ isMounted: boolean; className: string; delay: numbe
   ({ isMounted, className, delay }) => {
     const content = (
       <div className={className + " flex flex-col items-center justify-center"}>
-        <span className={`${poppins.className} font-extrabold`}>
+        <span className={`${orbitron.className} font-extrabold`}>
           CODE<span className="text-yellow-500">KRAFTERS</span>
         </span>
         <span className={`${poppins.className} block`}>CORE TEAM</span>
