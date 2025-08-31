@@ -29,10 +29,10 @@ const HeroPage = () => {
   const whiteOpacity = useTransform(scrollYProgress, [0.8, 1], [0, 1]);
 
   return (
-    <div className=" h-[150vh] bg-black">
+    <div className="relative h-[100vh] bg-black">
       {/* outer image */}
       <motion.div
-        className="fixed inset-0 h-screen w-screen bg-[url('/CK_group.png')] bg-fixed bg-cover"
+        className="absolute inset-0 h-screen w-screen bg-[url('/CK_group.png')] bg-fixed bg-cover"
         style={{
           scale: imageScale,
           opacity: outerImageOpacity,
@@ -40,15 +40,15 @@ const HeroPage = () => {
       ></motion.div>
 
       {/* mask image */}
-      <motion.div
+      {/* <motion.div
         className="fixed flex m-auto h-full w-full inset-0 [mask-image:url('/ck_logo.svg')] [mask-repeat:no-repeat]"
         style={{
           maskSize: useMotionTemplate`${maskSize}px`,
           maskPosition: useMotionTemplate`center ${maskPosition}px`,
         }}
-      >
+      > */}
         {/* //inner image  */}
-        <motion.div
+        {/* <motion.div
           style={{
             scale: imageScale,
           }}
@@ -59,7 +59,7 @@ const HeroPage = () => {
           opacity: whiteOpacity,
         }}
          className="fixed inset-0 h-full w-full bg-white"></motion.div>
-      </motion.div>
+      </motion.div> */}
     </div>
   );
 };
