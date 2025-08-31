@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import type React from "react"
 import { useMemo } from "react"
 
@@ -10,7 +11,7 @@ interface CompanyLogo {
   alt: string
 }
 
-const Partners: React.FC = () => {
+const SponsorsComponent: React.FC = () => {
   const companies = useMemo<CompanyLogo[]>(
     () => [
       {
@@ -119,7 +120,7 @@ const Partners: React.FC = () => {
   )
 
   return (
-    <div className="min-h-screen bg-black text-white flex content-center items-center">
+    <div className="min-h-screen bg-black text-white flex content-center items-center relative">
       <div className="container mx-auto px-4 py-8 md:py-12 lg:py-16">
         <div className="text-center mb-8 md:mb-12 lg:mb-16">
           <h1 className="text-xs md:text-sm lg:text-base font-light tracking-[0.2em] leading-relaxed max-w-4xl mx-auto">
@@ -141,9 +142,11 @@ const Partners: React.FC = () => {
               
             >
               <div className="absolute inset-0 flex items-center justify-center p-0">
-                <img
+                <Image
                   src={company.imageUrl}
                   alt={company.alt}
+                  width={160}
+                  height={107}
                   className="w-full h-full object-cover filter brightness-75 group-hover:brightness-100 transition-all duration-300"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement;
@@ -172,4 +175,4 @@ const Partners: React.FC = () => {
   )
 }
 
-export default Partners
+export default SponsorsComponent
