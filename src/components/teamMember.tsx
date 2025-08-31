@@ -321,7 +321,7 @@ const MobileTitle = memo<{ isMounted: boolean; delay: number }>(({ isMounted, de
 
 MobileTitle.displayName = "MobileTitle"
 
-const TeamHeaderComplete = () => {
+const TeamMemberComponent = () => {
   const [isMounted, setIsMounted] = useState(false)
   const [activeImageId, setActiveImageId] = useState<number | null>(null)
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0)
@@ -371,7 +371,7 @@ const TeamHeaderComplete = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF] flex flex-col items-center justify-start px-4 py-8 overflow-y-auto">
+    <div className="min-h-screen bg-[#FFFFFF] flex flex-col items-center justify-start px-4 py-8 overflow-y-auto relative">
       <div className="flex-grow flex flex-col items-center justify-center">
         {/* Desktop Layout (>= 1024px) */}
         <div className="hidden lg:block">
@@ -575,4 +575,4 @@ const TeamHeaderComplete = () => {
   )
 }
 
-export default TeamHeaderComplete
+export default TeamMemberComponent
