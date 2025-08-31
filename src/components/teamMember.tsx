@@ -296,10 +296,8 @@ AnimatedTitle.displayName = "AnimatedTitle"
 const MobileTitle = memo<{ isMounted: boolean; delay: number }>(({ isMounted, delay }) => {
   const content = (
     <div className="flex flex-col items-center justify-center mb-6">
-      <span className="text-lg font-bold text-gray-900 drop-shadow-lg text-center leading-tight font-['Asimovian']">
-        CODE<span className="text-yellow-500">KRAFTERS</span>
-      </span>
-      <span className="text-sm font-semibold text-gray-800 text-center font-['Asimovian']">CORE TEAM</span>
+      <span className={`text-lg font-bold ${orbitron.className}`}>CODE<span className="text-yellow-500">KRAFTERS</span></span>
+      <span className={`text-sm font-semibold text-gray-800 text-center ${poppins.className}`}>CORE TEAM</span>
     </div>
   )
 
@@ -371,7 +369,7 @@ const TeamMemberComponent = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFFFF] flex flex-col items-center justify-start px-4 py-8 overflow-y-auto relative">
+    <div className="min-h-screen bg-[#f0f0d5] flex flex-col items-center justify-start px-4 py-8 overflow-y-auto relative">
       <div className="flex-grow flex flex-col items-center justify-center">
         {/* Desktop Layout (>= 1024px) */}
         <div className="hidden lg:block">
