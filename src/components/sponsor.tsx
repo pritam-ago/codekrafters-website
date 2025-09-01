@@ -17,7 +17,7 @@ const SponsorsComponent: React.FC = () => {
       {
         id: 1,
         name: "Coinex",
-        imageUrl: "/sponsor/coinex.png",
+        imageUrl: "/sponsor/coin.png",
         alt: "Coinex Logo",
       },
       {
@@ -29,7 +29,7 @@ const SponsorsComponent: React.FC = () => {
       {
         id: 3,
         name: "Edu Chain",
-        imageUrl: "/sponsor/edu.png",
+        imageUrl: "/sponsor/educhains.png",
         alt: "Edu Chain Logo",
       },
       {
@@ -41,7 +41,7 @@ const SponsorsComponent: React.FC = () => {
       {
         id: 5,
         name: "Kana Labs",
-        imageUrl: "/sponsor/kana.png",
+        imageUrl: "/sponsor/kanas.png",
         alt: "Kana Labs Logo",
       },
       {
@@ -59,7 +59,7 @@ const SponsorsComponent: React.FC = () => {
       {
         id: 8,
         name: "Qoneqt",
-        imageUrl: "/sponsor/qoneqt.png",
+        imageUrl: "/sponsor/q.png",
         alt: "Qoneqt Logo",
       },
       {
@@ -71,7 +71,7 @@ const SponsorsComponent: React.FC = () => {
       {
         id: 10,
         name: "ICP",
-        imageUrl: "/sponsor/icps.png",
+        imageUrl: "/sponsor/icpss.png",
         alt: "ICP Logo",
       },
       {
@@ -80,6 +80,12 @@ const SponsorsComponent: React.FC = () => {
         imageUrl: "/sponsor/riseins.png",
         alt: "Risein Logo",
       },
+      {
+        id: 12,
+        name: "PNB Metlife",
+        imageUrl: "/sponsor/pnb.png",
+        alt: "PNB Metlife Logo",
+      }
     ],
     [],
   )
@@ -123,16 +129,16 @@ const SponsorsComponent: React.FC = () => {
               }}
             >
               <div className={`image-container absolute inset-0 flex items-center justify-center p-3 ${
-                company.id === 2 || company.id === 4 || company.id === 6 || company.id === 9 || company.id === 10 || company.id === 11
+                company.id === 1 || company.id === 3 || company.id === 5 || company.id === 8 || company.id === 12
+                  ? 'bg-white rounded-lg'
+                  : company.id === 2 || company.id === 4 || company.id === 6 || company.id === 9 || company.id === 10 || company.id === 11
                   ? 'bg-white rounded-lg' 
-                  : company.id === 3
-                  ? 'rounded-lg'
                   : company.id === 7
-                  ? 'rounded-lg'
+                  ? 'bg-white rounded-lg'
                   : ''
               }`}
               style={{
-                backgroundColor: company.id === 3 ? '#102a46' : company.id === 7 ? '#eeeaff' : undefined
+                backgroundColor: company.id === 7 ? '#fff' : undefined
               }}>
                 <Image
                   src={company.imageUrl}
@@ -140,7 +146,9 @@ const SponsorsComponent: React.FC = () => {
                   fill
                   sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
                   className={`filter brightness-75 group-hover:brightness-100 transition-all duration-300 ${
-                    company.id === 1 || company.id === 8 
+                    company.id === 1
+                      ? 'object-contain p-4'
+                      : company.id === 8
                       ? 'object-cover' 
                       : 'object-contain p-4'
                   }`}
