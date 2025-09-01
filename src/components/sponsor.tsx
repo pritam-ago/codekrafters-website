@@ -107,6 +107,17 @@ const SponsorsComponent: React.FC = () => {
     }
   }
 
+  // Function to get responsive padding classes - ONLY mobile changes for boxes 8 & 11
+  const getImagePadding = (companyId: number) => {
+    if (companyId === 8) { // Qoneqt - reduce mobile padding, keep original desktop
+      return 'p-1 md:p-8' // Much less padding on mobile, original p-8 on desktop
+    }
+    if (companyId === 11) { // Risein - reduce mobile padding, keep original desktop  
+      return 'p-1 md:p-4' // Much less padding on mobile, original p-4 on desktop
+    }
+    return 'p-4' // All other boxes keep original padding unchanged
+  }
+
   return (
     <div className="min-h-screen bg-white text-black flex items-center justify-center relative">
       <div className="container mx-auto px-4 py-8 md:py-12 lg:py-16">
@@ -128,7 +139,7 @@ const SponsorsComponent: React.FC = () => {
                 margin: '0 auto'
               }}
             >
-              <div className={`image-container absolute inset-0 flex items-center justify-center p-3 ${
+              <div className={`image-container absolute inset-0 flex items-center justify-center ${getImagePadding(company.id)} ${
                 company.id === 1 || company.id === 3 || company.id === 5 || company.id === 8 || company.id === 12
                   ? 'bg-white rounded-lg'
                   : company.id === 2 || company.id === 4 || company.id === 6 || company.id === 9 || company.id === 10 || company.id === 11
@@ -145,13 +156,7 @@ const SponsorsComponent: React.FC = () => {
                   alt={company.alt}
                   fill
                   sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                  className={`filter brightness-75 group-hover:brightness-100 transition-all duration-300 ${
-                    company.id === 1
-                      ? 'object-contain p-4'
-                      : company.id === 8
-                      ? 'object-contain p-8' 
-                      : 'object-contain p-4'
-                  }`}
+                  className="filter brightness-75 group-hover:brightness-100 transition-all duration-300 object-contain"
                   onError={(e) => handleImageError(e, company.name)}
                   priority={company.id <= 8} // Prioritize first 8 images
                 />
