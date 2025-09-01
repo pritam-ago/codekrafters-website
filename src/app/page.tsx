@@ -14,11 +14,10 @@ export default function Home() {
           src="/ck-core.jpg"
           alt="CK Group"
           className="object-cover w-full h-full sm:block hidden"
-          width={1920}
-          height={1080}
+          fill
         />
         <Image
-          src="/ck-mobile.jpg"
+          src="/ck-mob.png"
           alt="CK Group Mobile"
           className="object-cover w-full h-full block sm:hidden"
           fill
