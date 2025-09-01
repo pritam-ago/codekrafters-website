@@ -53,7 +53,7 @@ const SponsorsComponent: React.FC = () => {
       {
         id: 7,
         name: "Polygon",
-        imageUrl: "/sponsor/polygon.png",
+        imageUrl: "/sponsor/polygons.png",
         alt: "Polygon Logo",
       },
       {
@@ -108,10 +108,10 @@ const SponsorsComponent: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center relative">
+    <div className="min-h-screen bg-white text-black flex items-center justify-center relative">
       <div className="container mx-auto px-4 py-8 md:py-12 lg:py-16">
         <div className="text-center mb-8 md:mb-12 lg:mb-16">
-          <h1 className="text-xs md:text-sm lg:text-base font-light tracking-[0.2em] leading-relaxed max-w-4xl mx-auto">
+          <h1 className="text-xs md:text-sm lg:text-base font-bold tracking-[0.2em] leading-relaxed max-w-4xl mx-auto text-black">
             {headerText}
           </h1>
         </div>
@@ -134,7 +134,7 @@ const SponsorsComponent: React.FC = () => {
                   : company.id === 2 || company.id === 4 || company.id === 6 || company.id === 9 || company.id === 10 || company.id === 11
                   ? 'bg-white rounded-lg' 
                   : company.id === 7
-                  ? 'bg-white rounded-lg'
+                  ? 'rounded-lg'
                   : ''
               }`}
               style={{
@@ -149,7 +149,7 @@ const SponsorsComponent: React.FC = () => {
                     company.id === 1
                       ? 'object-contain p-4'
                       : company.id === 8
-                      ? 'object-cover' 
+                      ? 'object-contain p-8' 
                       : 'object-contain p-4'
                   }`}
                   onError={(e) => handleImageError(e, company.name)}
