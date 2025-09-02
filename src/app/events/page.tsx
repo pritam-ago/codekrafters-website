@@ -1,6 +1,21 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
+import { Russo_One, Montserrat } from 'next/font/google';
+
+// Fonts must be initialized at module scope
+const russoOne = Russo_One({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-russo-one',
+  display: 'swap',
+});
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  weight: ['800', '900'],
+  variable: '--font-montserrat',
+  display: 'swap',
+});
 import Head from 'next/head';
 
 // Minimal types for clarity
@@ -217,7 +232,7 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
       
       <div 
         ref={scrollerRef}
-        className="scroller h-screen overflow-auto text-[12vw] overflow-x-hidden"
+        className="scroller h-screen overflow-auto overflow-x-hidden"
         style={{
           scrollBehavior: 'auto', // Ensure smooth scrolling is controlled by GSAP
           WebkitOverflowScrolling: 'touch', // Better iOS scrolling
@@ -225,26 +240,26 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
         }}
       >
 
-        {/* Hackverse text with parallax effect */}
-        <div className="h-40 relative overflow-hidden" style={{ backgroundColor: '#F2F0D8' }}>
-          <h1 className="hackverse-text text-center text-6xl md:text-8xl font-extrabold mt-10 will-change-transform tracking-tight leading-none text-transparent bg-clip-text bg-gradient-to-r from-[#1a1a1a] to-[#6b6b6b] drop-shadow-[0_2px_0_rgba(0,0,0,0.15)]">
-            Events
-          </h1>
-          <div className="mx-auto mt-3 h-1 w-24 rounded-full bg-gradient-to-r from-[#1a1a1a]/60 to-[#6b6b6b]/60"></div>
-        </div>
         
         {/* First image line (swapped with previous third line) */}
         <section>
           <div className="wrapper flex text-[16vh] font-medium will-change-transform">
             {launchpadImages.map((imageName: string, imageIndex: number) => (
-              <img
+              <div
                 key={`img-1-${imageIndex}`}
-                className="h-40 md:h-48 lg:h-56 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
-                src={`/launchpad/${imageName}`}
-                alt={`Other Event ${imageIndex + 1}`}
-                loading="lazy"
-                decoding="async"
-              />
+                className="relative group m-2 flex-shrink-0"
+              >
+                <img
+                  className="h-40 md:h-48 lg:h-56 rounded-xl transition-all duration-300 group-hover:scale-95 cursor-pointer will-change-transform"
+                  src={`/launchpad/${imageName}`}
+                  alt={`Other Event ${imageIndex + 1}`}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="pointer-events-none absolute inset-0 rounded-xl bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <span className="text-white text-base md:text-lg lg:text-xl font-semibold tracking-wide">Launchpad 2.0</span>
+                </div>
+              </div>
             ))}
           </div>
         </section>
@@ -253,30 +268,58 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
         <section>
           <div className="wrapper flex text-[16vh] font-medium will-change-transform">
             {hackverseImages.map((imageName: string, imageIndex: number) => (
-              <img
+              <div
                 key={`img-2-${imageIndex}`}
-                className="h-40 md:h-48 lg:h-56 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
-                src={`/hackverse/${imageName}`}
-                alt={`Other Event ${imageIndex + 1}`}
-                loading="lazy"
-                decoding="async"
-              />
+                className="relative group m-2 flex-shrink-0"
+              >
+                <img
+                  className="h-40 md:h-48 lg:h-56 rounded-xl transition-all duration-300 group-hover:scale-95 cursor-pointer will-change-transform"
+                  src={`/hackverse/${imageName}`}
+                  alt={`Other Event ${imageIndex + 1}`}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="pointer-events-none absolute inset-0 rounded-xl bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <span className="text-white text-base md:text-lg lg:text-xl font-semibold tracking-wide">Hackverse 2025</span>
+                </div>
+              </div>
             ))}
           </div>
         </section>
+
+        {/* Title with parallax effect */}
+        <div className="relative overflow-hidden py-5" style={{ backgroundColor: '#F2F0D8' }}>
+          <div className="hackverse-text will-change-transform">
+            <div className={`w-full text-center drop-shadow-[0_2px_0_rgba(0,0,0,0.15)] leading-[0.85] ${russoOne.className}`}>
+              <span className="text-4xl md:text-6xl text-[#0b1220] tracking-[0.02em]">CODE</span>
+              <span className="text-4xl md:text-6xl text-[#F2B200] tracking-[0.02em] ml-1">KRAFTERS</span>
+            </div>
+            <div className={`w-full text-center drop-shadow-[0_2px_0_rgba(0,0,0,0.15)] mt-0 ${montserrat.className}`}>
+              <span className="text-3xl md:text-5xl text-[#0b1220] tracking-[0.01em] font-black">EVENTS</span>
+            </div>
+          </div>
+        </div>
+        
 
         {/* Third image line (swapped with previous first line) */}
         <section>
           <div className="wrapper flex text-[16vh] font-medium will-change-transform">
             {qonneqtImages.map((imageName: string, imageIndex: number) => (
-              <img
+              <div
                 key={`img-3-${imageIndex}`}
-                className="h-40 md:h-48 lg:h-56 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
-                src={`/Qonneqt/${imageName}`}
-                alt={`Hackverse Event ${imageIndex + 1}`}
-                loading="lazy"
-                decoding="async"
-              />
+                className="relative group m-2 flex-shrink-0"
+              >
+                <img
+                  className="h-40 md:h-48 lg:h-56 rounded-xl transition-all duration-300 group-hover:scale-95 cursor-pointer will-change-transform"
+                  src={`/Qonneqt/${imageName}`}
+                  alt={`Hackverse Event ${imageIndex + 1}`}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="pointer-events-none absolute inset-0 rounded-xl bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <span className="text-white text-base md:text-lg lg:text-xl font-semibold tracking-wide">Builder's Qonneqt</span>
+                </div>
+              </div>
             ))}
           </div>
         </section>
@@ -285,14 +328,21 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
         <section>
           <div className="wrapper flex text-[16vh] font-medium will-change-transform">
             {otherEventsImages.map((imageName: string, imageIndex: number) => (
-              <img
+              <div
                 key={`img-4-${imageIndex}`}
-                className="h-40 md:h-48 lg:h-56 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
-                src={`/otherevents/${imageName}`}
-                alt={`Hackverse Event ${imageIndex + 1}`}
-                loading="lazy"
-                decoding="async"
-              />
+                className="relative group m-2 flex-shrink-0"
+              >
+                <img
+                  className="h-40 md:h-48 lg:h-56 rounded-xl transition-all duration-300 group-hover:scale-95 cursor-pointer will-change-transform"
+                  src={`/otherevents/${imageName}`}
+                  alt={`Hackverse Event ${imageIndex + 1}`}
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div className="pointer-events-none absolute inset-0 rounded-xl bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <span className="text-white text-base md:text-lg lg:text-xl font-semibold tracking-wide">Other Events</span>
+                </div>
+              </div>
             ))}
           </div>
         </section>
