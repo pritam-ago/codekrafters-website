@@ -3,6 +3,7 @@ import TeamMemberComponent from "@/components/teamMember";
 import SponsorsComponent from "@/components/sponsor";
 import StoryComponent from "@/components/Story";
 import Image from "next/image";
+import EventSection from "@/components/Events";
 
 export default function Home() {
   return (
@@ -24,6 +25,7 @@ export default function Home() {
         />
       </div>
       <StoryComponent/>
+      <EventSection />
       <TeamMemberComponent />
       <SponsorsComponent />
     </main>
