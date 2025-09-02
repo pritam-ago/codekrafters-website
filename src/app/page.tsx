@@ -2,6 +2,7 @@ import TeamMemberComponent from "@/components/teamMember";
 // import HeroPage from "@/components/hero";
 import SponsorsComponent from "@/components/sponsor";
 import StoryComponent from "@/components/Story";
+import EventSection from "@/app/events/page";
 import Image from "next/image";
 
 export default function Home() {
@@ -24,6 +25,7 @@ export default function Home() {
         />
       </div>
       <StoryComponent/>
+      <EventSection/>
       <TeamMemberComponent />
       <SponsorsComponent />
     </main>

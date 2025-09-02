@@ -16,13 +16,13 @@ const montserrat = Montserrat({
   variable: '--font-montserrat',
   display: 'swap',
 });
-import Head from 'next/head';
+
 
 // Minimal types for clarity
 type GSAPType = any;
 type ScrollTriggerType = any;
 
-const ScrollTriggerDirectionalMovement: React.FC = () => {
+const EventSection: React.FC = () => {
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -45,9 +45,7 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
           ignoreMobileResize: true
         });
         
-        if (typeof window !== 'undefined' && document.scrollingElement) {
-          document.scrollingElement.scrollTo(0, 0);
-          
+        if (typeof window !== 'undefined') {
           requestAnimationFrame(() => {
             handleScroll(gsap, ScrollTrigger);
             
@@ -72,9 +70,10 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
   }, []);
 
   const handleScroll = (gsap: GSAPType, ScrollTrigger: ScrollTriggerType): void => {
-    ScrollTrigger.defaults({
-      scroller: '.scroller',
-    });
+    // Remove scroller default since we're now part of main page scroll
+    // ScrollTrigger.defaults({
+    //   scroller: '.scroller',
+    // });
 
     const sections = gsap.utils.toArray('section');
     
@@ -145,6 +144,7 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
             end: "bottom top",
             invalidateOnRefresh: true,
             anticipatePin: 1,
+            scroller: "body", // Use main page scroll
           },
         }
       );
@@ -169,6 +169,7 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
             end: "center center", // Stop at center of screen
             invalidateOnRefresh: true,
             anticipatePin: 1,
+            scroller: "body", // Use main page scroll
           },
         }
       );
@@ -223,19 +224,10 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
   ];
 
   return (
-    <>
-      <Head>
-        <title>4-Line Image Parallax</title>
-        <meta name="description" content="A beautiful 4-line image parallax scroll effect" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-      </Head>
-      
-      <div 
+    <div 
         ref={scrollerRef}
-        className="scroller h-screen overflow-auto overflow-x-hidden"
+        className="events-section overflow-x-hidden"
         style={{
-          scrollBehavior: 'auto', // Ensure smooth scrolling is controlled by GSAP
-          WebkitOverflowScrolling: 'touch', // Better iOS scrolling
           backgroundColor: '#F2F0D8',
         }}
       >
@@ -347,8 +339,7 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
           </div>
         </section>
       </div>
-    </>
   );
 };
 
-export default ScrollTriggerDirectionalMovement;
+export default EventSection;
