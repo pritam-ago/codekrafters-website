@@ -2,7 +2,6 @@ import TeamMemberComponent from "@/components/teamMember";
 // import HeroPage from "@/components/hero";
 import SponsorsComponent from "@/components/sponsor";
 import StoryComponent from "@/components/Story";
-import EventSection from "@/app/events/page";
 import Image from "next/image";
 import EventSection from "@/components/Events";
 
