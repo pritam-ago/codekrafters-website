@@ -3,41 +3,9 @@
 import React, { useEffect, useRef } from 'react';
 import Head from 'next/head';
 
-// Type definitions
-interface GSAPType {
-  registerPlugin: (...plugins: object[]) => void;
-  utils: {
-    toArray: (selector: string) => Element[];
-  };
-  fromTo: (
-    target: Element,
-    fromVars: { x: string | number; y?: string | number },
-    toVars: {
-      x: string | number;
-      y?: string | number;
-      ease: string;
-      scrollTrigger: {
-        trigger: Element;
-        scrub: number | boolean;
-        start: string;
-        end: string;
-        invalidateOnRefresh: boolean;
-        anticipatePin: number;
-      };
-    }
-  ) => void;
-  set: (target: Element, vars: { willChange: string }) => void;
-}
-
-interface ScrollTriggerType {
-  defaults: (config: { scroller: string }) => void;
-  getAll: () => Array<{ kill: () => void }>;
-  refresh: () => void;
-  config: (config: { 
-    autoRefreshEvents: string;
-    ignoreMobileResize: boolean;
-  }) => void;
-}
+// Minimal types for clarity
+type GSAPType = any;
+type ScrollTriggerType = any;
 
 const ScrollTriggerDirectionalMovement: React.FC = () => {
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -48,28 +16,28 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
     // Dynamic import of GSAP to avoid SSR issues
     const loadGSAP = async () => {
       try {
-        const { gsap }: { gsap: GSAPType } = await import('gsap');
-        const { ScrollTrigger }: { ScrollTrigger: ScrollTriggerType } = await import('gsap/dist/ScrollTrigger');
-        
-        gsap.registerPlugin(ScrollTrigger);
-        
-        // Configure ScrollTrigger for better performance
+        const all = await import('gsap/all');
+        const { gsap, ScrollTrigger, ModifiersPlugin } = all as unknown as {
+          gsap: GSAPType;
+          ScrollTrigger: ScrollTriggerType;
+          ModifiersPlugin: object;
+        };
+
+        gsap.registerPlugin(ScrollTrigger, ModifiersPlugin);
+
         ScrollTrigger.config({
           autoRefreshEvents: "visibilitychange,DOMContentLoaded,load,resize",
           ignoreMobileResize: true
         });
         
-        // Reset scroll position
         if (typeof window !== 'undefined' && document.scrollingElement) {
           document.scrollingElement.scrollTo(0, 0);
           
-          // Wait for next frame to ensure DOM is ready
           requestAnimationFrame(() => {
             handleScroll(gsap, ScrollTrigger);
             
-            // Set up cleanup function
             cleanup = () => {
-              ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+              ScrollTrigger.getAll().forEach((trigger: any) => trigger.kill());
             };
           });
         }
@@ -105,33 +73,63 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
       // Optimize performance with will-change
       gsap.set(wrapper, { willChange: 'transform' });
       
-      // Calculate movement distance more precisely
-      const wrapperWidth = wrapperElement.scrollWidth;
+      // Ensure seamless loop by duplicating original content to exceed container width
+      const originalHTMLKey = '__originalHTML__';
+      const anyWrapper = wrapperElement as unknown as { [key: string]: string };
+      if (!anyWrapper[originalHTMLKey]) {
+        anyWrapper[originalHTMLKey] = wrapperElement.innerHTML;
+      } else {
+        wrapperElement.innerHTML = anyWrapper[originalHTMLKey];
+      }
+
+      // Measure original segment width (one full, non-repeating set)
+      const measureOriginalWidth = (): number => {
+        return wrapperElement.scrollWidth;
+      };
+
+      let originalWidth = measureOriginalWidth();
       const sectionWidth = sectionElement.offsetWidth;
-      const moveDistance = wrapperWidth - sectionWidth;
-      
-      // Alternating pattern considering text as row 2:
-      // Row 0 (section 0): L→R, Row 1 (section 1): R→L, Row 2 (text): L→R, Row 3 (section 2): R→L, Row 4 (section 3): L→R
-      // So sections after text need to be offset: section 2 becomes row 3, section 3 becomes row 4
-      const rowIndex = index < 2 ? index : index + 1; // Account for text row
-      const [xStart, xEnd]: [string | number, string | number] =
-        rowIndex % 2
-          ? ['100%', -moveDistance]     // Odd row: Right to Left
-          : [-moveDistance, 0];         // Even row: Left to Right
-      
+
+      // Duplicate content until we have at least ~2.5x the section width
+      // This guarantees no gaps during wrap even on large screens
+      while (wrapperElement.scrollWidth < sectionWidth * 2.5 && originalWidth > 0) {
+        wrapperElement.innerHTML += anyWrapper[originalHTMLKey];
+      }
+
+      // Recompute the original segment width in case images/layout adjusted
+      // If originalWidth is 0 (images not measured yet), fall back to dividing by 2
+      originalWidth = originalWidth || Math.max(1, Math.floor(wrapperElement.scrollWidth / 2));
+
+      // Determine direction per visual row index (considering the text row at index 2)
+      const rowIndex = index < 2 ? index : index + 1; // Account for text row in the middle
+      const isRightToLeft = rowIndex % 2 === 1; // odd rows move R→L
+
+      // Apply a phase offset for the 2nd image line (section index 1)
+      // to avoid seeing the same sequence too soon. This shifts the loop start.
+      const applyPhaseOffset = index === 1;
+      const phaseOffset = applyPhaseOffset ? originalWidth * 0.8 : 0; // 40% shift
+
+      const xStart = isRightToLeft ? -phaseOffset : -originalWidth + phaseOffset;
+      const xEnd = isRightToLeft ? -originalWidth - phaseOffset : 0 + phaseOffset;
+
+      const wrapX = gsap.utils.wrap(-originalWidth, 0);
+
       gsap.fromTo(
-        wrapper,
+        wrapperElement,
         { x: xStart },
         {
           x: xEnd,
-          ease: "none", // Linear easing for smooth scrubbing
+          ease: "none",
+          modifiers: {
+            x: (x: string) => `${wrapX(parseFloat(x))}px`,
+          },
           scrollTrigger: {
-            trigger: section,
-            scrub: 3, // Increased from 1.2 to 3 for slower movement
+            trigger: sectionElement,
+            scrub: 3,
             start: "top bottom",
-            end: "bottom top", 
-            invalidateOnRefresh: true, // Recalculate on resize
-            anticipatePin: 1, // Better performance for pinned elements
+            end: "bottom top",
+            invalidateOnRefresh: true,
+            anticipatePin: 1,
           },
         }
       );
@@ -164,13 +162,50 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
     // Refresh ScrollTrigger after setup
     ScrollTrigger.refresh();
   };
-const othereventsImages = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.JPG', '7.JPG', '8.JPG', '9.JPG', '10.JPG', '11.JPG', '12.png', '13.png', '14.png'];
-  const hackverseImages = ['02-hackverse-event.jpg', '03-hackverse-event.jpg', '04-hackverse-event.jpg', '05-hackverse-event.jpg', '06-hackverse-event.jpg', '07-hackverse-event.jpg', '08-hackverse-event.jpg', '09-hackverse-event.jpg', '10-hackverse-event.jpg', '11-hackverse-event.jpg'];
-  
-  const shuffledOtherevents1 = ['1.png', '3.png', '5.png', '7.JPG', '9.JPG', '11.JPG', '13.png', '2.png', '4.png', '6.JPG', '8.JPG', '10.JPG', '12.png', '14.png'];
-  const shuffledOtherevents2 = ['14.png', '12.png', '10.JPG', '8.JPG', '6.JPG', '4.png', '2.png', '13.png', '11.JPG', '9.JPG', '7.JPG', '5.png', '3.png', '1.png'];
-  const shuffledHackverse1 = ['02-hackverse-event.jpg', '04-hackverse-event.jpg', '06-hackverse-event.jpg', '08-hackverse-event.jpg', '10-hackverse-event.jpg', '03-hackverse-event.jpg', '05-hackverse-event.jpg', '07-hackverse-event.jpg', '09-hackverse-event.jpg', '11-hackverse-event.jpg'];
-  const shuffledHackverse2 = ['11-hackverse-event.jpg', '09-hackverse-event.jpg', '07-hackverse-event.jpg', '05-hackverse-event.jpg', '03-hackverse-event.jpg', '10-hackverse-event.jpg', '08-hackverse-event.jpg', '06-hackverse-event.jpg', '04-hackverse-event.jpg', '02-hackverse-event.jpg'];
+
+  // Image lists by folder
+  const qonneqtImages = [
+    'qonneqt-001.jpg',
+    'qonneqt-002.jpg',
+    'qonneqt-003.jpg',
+    'qonneqt-004.jpg',
+    'qonneqt-005.jpg',
+    'qonneqt-006.png',
+    'qonneqt-007.jpg',
+    'qonneqt-008.jpg',
+  ];
+  const hackverseImages = [
+    'hackverse-001.jpg',
+    'hackverse-002.jpg',
+    'hackverse-003.jpg',
+    'hackverse-004.jpg',
+    'hackverse-005.jpg',
+    'hackverse-006.jpg',
+    'hackverse-007.jpg',
+    'hackverse-008.jpg',
+    'hackverse-009.jpg',
+    'hackverse-010.jpg',
+  ];
+  const launchpadImages = [
+    'launchpad-001.jpg',
+    'launchpad-002.jpg',
+    'launchpad-003.png',
+    'launchpad-004.jpg',
+    'launchpad-005.jpg',
+    'launchpad-006.jpg',
+    'launchpad-007.jpg',
+    'launchpad-008.jpg',
+    'launchpad-009.jpg',
+    'launchpad-010.jpg',
+  ];
+  const otherEventsImages = [
+    'otherevents-001.png',
+    'otherevents-002.png',
+    'otherevents-003.png',
+    'otherevents-004.png',
+    'otherevents-005.png',
+    'otherevents-006.png',
+  ];
 
   return (
     <>
@@ -182,25 +217,30 @@ const othereventsImages = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.JPG',
       
       <div 
         ref={scrollerRef}
-        className="scroller h-screen overflow-auto text-[12vw] overflow-x-hidden bg-orange-50"
+        className="scroller h-screen overflow-auto text-[12vw] overflow-x-hidden"
         style={{
           scrollBehavior: 'auto', // Ensure smooth scrolling is controlled by GSAP
           WebkitOverflowScrolling: 'touch', // Better iOS scrolling
+          backgroundColor: '#F2F0D8',
         }}
       >
-        {/* Top spacing section */}
-        <div className="h-40 bg-orange-50"></div>
 
+        {/* Hackverse text with parallax effect */}
+        <div className="h-40 relative overflow-hidden" style={{ backgroundColor: '#F2F0D8' }}>
+          <h1 className="hackverse-text text-center text-6xl md:text-8xl font-extrabold mt-10 will-change-transform tracking-tight leading-none text-transparent bg-clip-text bg-gradient-to-r from-[#1a1a1a] to-[#6b6b6b] drop-shadow-[0_2px_0_rgba(0,0,0,0.15)]">
+            Events
+          </h1>
+          <div className="mx-auto mt-3 h-1 w-24 rounded-full bg-gradient-to-r from-[#1a1a1a]/60 to-[#6b6b6b]/60"></div>
+        </div>
         
-        
-        {/* First image line */}
+        {/* First image line (swapped with previous third line) */}
         <section>
           <div className="wrapper flex text-[16vh] font-medium will-change-transform">
-            {shuffledOtherevents1.map((imageName: string, imageIndex: number) => (
+            {launchpadImages.map((imageName: string, imageIndex: number) => (
               <img
                 key={`img-1-${imageIndex}`}
-                className="h-80 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
-                src={`/otherevents/${imageName}`}
+                className="h-40 md:h-48 lg:h-56 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
+                src={`/launchpad/${imageName}`}
                 alt={`Other Event ${imageIndex + 1}`}
                 loading="lazy"
                 decoding="async"
@@ -212,11 +252,11 @@ const othereventsImages = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.JPG',
         {/* Second image line */}
         <section>
           <div className="wrapper flex text-[16vh] font-medium will-change-transform">
-            {shuffledOtherevents2.map((imageName: string, imageIndex: number) => (
+            {hackverseImages.map((imageName: string, imageIndex: number) => (
               <img
                 key={`img-2-${imageIndex}`}
-                className="h-80 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
-                src={`/otherevents/${imageName}`}
+                className="h-40 md:h-48 lg:h-56 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
+                src={`/hackverse/${imageName}`}
                 alt={`Other Event ${imageIndex + 1}`}
                 loading="lazy"
                 decoding="async"
@@ -225,21 +265,14 @@ const othereventsImages = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.JPG',
           </div>
         </section>
 
-        {/* Hackverse text with parallax effect */}
-        <div className="h-40 bg-orange-50 relative overflow-hidden">
-          <h1 className="hackverse-text text-center text-6xl font-bold mt-10 will-change-transform">
-            Hackverse 2025
-          </h1>
-        </div>
-        
-        {/* Third image line */}
+        {/* Third image line (swapped with previous first line) */}
         <section>
           <div className="wrapper flex text-[16vh] font-medium will-change-transform">
-            {shuffledHackverse1.map((imageName: string, imageIndex: number) => (
+            {qonneqtImages.map((imageName: string, imageIndex: number) => (
               <img
                 key={`img-3-${imageIndex}`}
-                className="h-80 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
-                src={`/hackverse/${imageName}`}
+                className="h-40 md:h-48 lg:h-56 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
+                src={`/Qonneqt/${imageName}`}
                 alt={`Hackverse Event ${imageIndex + 1}`}
                 loading="lazy"
                 decoding="async"
@@ -251,11 +284,11 @@ const othereventsImages = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.JPG',
         {/* Fourth image line */}
         <section>
           <div className="wrapper flex text-[16vh] font-medium will-change-transform">
-            {shuffledHackverse2.map((imageName: string, imageIndex: number) => (
+            {otherEventsImages.map((imageName: string, imageIndex: number) => (
               <img
                 key={`img-4-${imageIndex}`}
-                className="h-80 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
-                src={`/hackverse/${imageName}`}
+                className="h-40 md:h-48 lg:h-56 rounded-xl m-2 transition-all duration-300 hover:scale-95 cursor-pointer flex-shrink-0 will-change-transform"
+                src={`/otherevents/${imageName}`}
                 alt={`Hackverse Event ${imageIndex + 1}`}
                 loading="lazy"
                 decoding="async"
