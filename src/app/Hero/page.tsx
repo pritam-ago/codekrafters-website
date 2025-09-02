@@ -52,7 +52,7 @@ const HeroPage = () => {
           style={{
             scale: imageScale,
           }}
-          className="fixed inset-0 h-full w-full bg-[url('/ck_group.jpeg')] bg-fixed bg-cover"
+          className="fixed inset-0 h-full w-full bg-[url('/CK_group.png')] bg-fixed bg-cover"
         ></motion.div> 
 
         <motion.div style={{
