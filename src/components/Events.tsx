@@ -139,7 +139,7 @@ const EventSection: React.FC = () => {
           },
           scrollTrigger: {
             trigger: sectionElement,
-            scrub: 3,
+            scrub: 5,
             start: "top bottom",
             end: "bottom top",
             invalidateOnRefresh: true,
