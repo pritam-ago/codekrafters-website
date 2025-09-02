@@ -149,7 +149,9 @@ const SponsorsComponent: React.FC = () => {
                     company.id === 1
                       ? 'object-contain p-4'
                       : company.id === 8
-                      ? 'object-contain p-8' 
+                      ? 'object-contain p-2 md:p-8' // Mobile: p-2, Desktop: p-8
+                      : company.id === 11
+                      ? 'object-contain p-2 md:p-4' // Mobile: p-2, Desktop: p-4  
                       : 'object-contain p-4'
                   }`}
                   onError={(e) => handleImageError(e, company.name)}
