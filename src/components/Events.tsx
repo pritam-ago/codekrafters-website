@@ -22,7 +22,7 @@ import Head from 'next/head';
 type GSAPType = any;
 type ScrollTriggerType = any;
 
-const ScrollTriggerDirectionalMovement: React.FC = () => {
+const EventSection: React.FC = () => {
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -351,4 +351,4 @@ const ScrollTriggerDirectionalMovement: React.FC = () => {
   );
 };
 
-export default ScrollTriggerDirectionalMovement;
+export default EventSection;
