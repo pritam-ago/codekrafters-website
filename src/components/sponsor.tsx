@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import type React from "react"
-import { useMemo } from "react"
+import Image from "next/image";
+import type React from "react";
+import { useMemo } from "react";
 
 interface CompanyLogo {
-  id: number
-  name: string
-  imageUrl: string
-  alt: string
+  id: number;
+  name: string;
+  imageUrl: string;
+  alt: string;
 }
 
 const SponsorsComponent: React.FC = () => {
@@ -85,87 +85,222 @@ const SponsorsComponent: React.FC = () => {
         name: "PNB Metlife",
         imageUrl: "/sponsor/pnb.png",
         alt: "PNB Metlife Logo",
-      }
+      },
     ],
-    [],
-  )
+    []
+  );
 
-  const headerText = useMemo(
-    () => "WE PARTNER WITH VISIONARY DEVELOPERS AND PUBLISHERS TO LAUNCH THE NEXT GENERATION OF INNOVATIVE IDEAS",
-    [],
-  )
+  // Split companies into 3 columns (4 companies each)
+  const column1 = companies.slice(0, 4);
+  const column2 = companies.slice(4, 8);
+  const column3 = companies.slice(8, 12);
 
-  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>, companyName: string) => {
-    const img = e.currentTarget
-    const container = img.closest('.image-container')
+  // For mobile - combine all companies
+  const allCompanies = [...companies];
+
+  const handleImageError = (
+    e: React.SyntheticEvent<HTMLImageElement>,
+    companyName: string
+  ) => {
+    const img = e.currentTarget;
+    const container = img.closest(".image-container");
     if (container) {
       container.innerHTML = `
         <div class="w-full h-full flex items-center justify-center bg-gray-800/50 rounded border border-gray-600">
-          <span class="text-xs text-gray-300 text-center px-2 font-medium">${companyName}</span>
+          <span class="text-sm text-gray-300 text-center px-2 font-medium">${companyName}</span>
         </div>
-      `
+      `;
     }
-  }
+  };
 
-  return (
-    <div className="min-h-screen text-black flex items-center justify-center relative" style={{ backgroundColor: '#FFEFB3' }}>
-      <div className="container mx-auto px-4 py-8 md:py-12 lg:py-16">
-        <div className="text-center mb-8 md:mb-12 lg:mb-16">
-          <h1 className="text-xs md:text-sm lg:text-base font-bold tracking-[0.2em] leading-relaxed max-w-4xl mx-auto text-black">
-            {headerText}
-          </h1>
-        </div>
+  const renderLogoCard = (company: CompanyLogo) => (
+    <div
+      key={company.id}
+      className="sponsor-card flex-shrink-0 bg-white/90 backdrop-blur-sm rounded-2xl overflow-hidden border-2 border-gray-800/20 hover:border-[#F2B200] transition-all duration-300 hover:shadow-2xl hover:shadow-[#F2B200]/30 group mb-6 relative"
+      style={{
+        width: "320px",
+        height: "240px",
+        background: "linear-gradient(135deg, #FFEFB3 0%, #FFDA4D 100%)",
+      }}
+    >
+      <div className="image-container relative w-full h-full flex items-center justify-center p-4">
+        <Image
+          src={company.imageUrl}
+          alt={company.alt}
+          fill
+          sizes="320px"
+          className={`filter brightness-100 group-hover:brightness-110 transition-all duration-500 drop-shadow-lg ${
+            company.id === 1
+              ? "object-contain p-8"
+              : company.id === 8
+              ? "object-contain p-10"
+              : company.id === 11
+              ? "object-contain p-6"
+              : "object-contain p-8"
+          }`}
+          onError={(e) => handleImageError(e, company.name)}
+        />
+      </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 max-w-6xl mx-auto">
-          {companies.map((company) => (
-            <div
-              key={company.id}
-              className="group relative border border-gray-800 rounded-lg overflow-hidden hover:border-gray-600 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/10"
-              style={{
-                backgroundColor: '#FFDA4D',
-                width: '100%',
-                maxWidth: '180px',
-                aspectRatio: '16/9',
-                margin: '0 auto'
-              }}
-            >
-              <div className="image-container absolute inset-2 flex items-center justify-center p-2 rounded-lg">
-                <Image
-                  src={company.imageUrl}
-                  alt={company.alt}
-                  fill
-                  sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, (max-width: 1024px) 25vw, 20vw"
-                  className={`filter brightness-75 group-hover:brightness-100 transition-all duration-300 ${
-                    company.id === 1
-                      ? 'object-contain p-4'
-                      : company.id === 8
-                      ? 'object-contain p-2 md:p-8' // Mobile: p-2, Desktop: p-8
-                      : company.id === 11
-                      ? 'object-contain p-2 md:p-4' // Mobile: p-2, Desktop: p-4  
-                      : 'object-contain p-4'
-                  }`}
-                  onError={(e) => handleImageError(e, company.name)}
-                  priority={company.id <= 8} // Prioritize first 8 images
-                />
-              </div>
+      {/* Company name overlay on hover */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-8 pointer-events-none">
+        <span className="text-white text-2xl font-bold tracking-wider transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300 drop-shadow-lg">
+          {company.name}
+        </span>
+      </div>
 
-              {/* Enhanced overlay with solid black background and white text */}
-              <div className="absolute inset-0 bg-black/65 opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-center justify-center rounded-lg z-10">
-                <span className="text-base md:text-lg font-bold text-white text-center px-4 tracking-wider transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-                  {company.name}
-                </span>
-              </div>
-
-              {/* Subtle border glow effect */}
-              <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-blue-500/20 blur-sm"></div>
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* Colorful glow effect on hover */}
+      <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#F2B200]/30 via-[#FFDA4D]/20 to-[#F2B200]/30 blur-xl"></div>
       </div>
     </div>
-  )
-}
+  );
 
-export default SponsorsComponent
+  return (
+    <div
+      className="min-h-screen flex flex-col items-center justify-center relative py-20"
+      style={{ backgroundColor: "#FFEFB3" }}
+    >
+      {/* Header Section */}
+      <div className="text-center mb-16 px-4 z-10">
+        <h2 className="text-5xl md:text-7xl font-black mb-6 tracking-tight">
+          <span className="text-[#0b1220]">LOVED BY</span>{" "}
+          <span className="text-[#F2B200]">SPONSORS</span>
+        </h2>
+        <p className="text-[#0b1220]/70 text-sm md:text-base max-w-2xl mx-auto tracking-wide">
+          Creators worldwide trust our community for their innovation needs
+        </p>
+      </div>
+
+      {/* Three Column Infinite Scroll */}
+      <div className="w-full overflow-hidden relative">
+        <div className="flex gap-3 px-6 max-w-[1100px] mx-auto">
+          {/* Column 1 - Scroll Down */}
+          <div
+            className="flex-1 overflow-hidden relative"
+            style={{ height: "700px" }}
+          >
+            <div className="scroll-column-down">
+              {/* Duplicate content for seamless loop */}
+              {[...column1, ...column1, ...column1].map((company, idx) => (
+                <div key={`col1-${company.id}-${idx}`}>
+                  {renderLogoCard(company)}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Column 2 - Scroll Up (opposite direction) */}
+          <div
+            className="flex-1 overflow-hidden relative"
+            style={{ height: "700px" }}
+          >
+            <div className="scroll-column-up">
+              {/* Duplicate content for seamless loop */}
+              {[...column2, ...column2, ...column2].map((company, idx) => (
+                <div key={`col2-${company.id}-${idx}`}>
+                  {renderLogoCard(company)}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Column 3 - Scroll Down */}
+          <div
+            className="flex-1 overflow-hidden relative"
+            style={{ height: "700px" }}
+          >
+            <div className="scroll-column-down">
+              {/* Duplicate content for seamless loop */}
+              {[...column3, ...column3, ...column3].map((company, idx) => (
+                <div key={`col3-${company.id}-${idx}`}>
+                  {renderLogoCard(company)}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Gradient overlays for smooth fade */}
+        <div className="absolute top-0 left-0 right-0 h-40 bg-gradient-to-b from-[#FFEFB3] to-transparent pointer-events-none z-10"></div>
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#FFEFB3] to-transparent pointer-events-none z-10"></div>
+      </div>
+
+      <style jsx>{`
+        .scroll-column-down {
+          display: flex;
+          flex-direction: column;
+          animation: scrollDown 40s linear infinite;
+        }
+
+        .scroll-column-up {
+          display: flex;
+          flex-direction: column;
+          animation: scrollUp 40s linear infinite;
+        }
+
+        .scroll-column-down:hover,
+        .scroll-column-up:hover {
+          animation-play-state: paused;
+        }
+
+        @keyframes scrollDown {
+          0% {
+            transform: translateY(0);
+          }
+          100% {
+            transform: translateY(-33.333%);
+          }
+        }
+
+        @keyframes scrollUp {
+          0% {
+            transform: translateY(-33.333%);
+          }
+          100% {
+            transform: translateY(0);
+          }
+        }
+
+        /* Responsive styles */
+        @media (max-width: 1024px) {
+          .scroll-column-down,
+          .scroll-column-up {
+            animation-duration: 30s;
+          }
+        }
+
+        @media (max-width: 768px) {
+          .flex.gap-3 {
+            gap: 0.75rem;
+          }
+
+          .sponsor-card {
+            width: 220px !important;
+            height: 160px !important;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .flex.gap-3 {
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .flex-1 {
+            width: 100%;
+            max-width: 340px;
+            height: 450px !important;
+          }
+
+          .sponsor-card {
+            width: 280px !important;
+            height: 200px !important;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default SponsorsComponent;
