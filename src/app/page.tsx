@@ -5,12 +5,12 @@ import StoryComponent from "@/components/Story";
 import Image from "next/image";
 import EventSection from "@/components/Events";
 import Footer from "@/components/Footer";
+import { Navbar } from "@/components/navbar";
 
 export default function Home() {
   return (
     <main className="min-h-screen max-w-screen overflow-x-hidden">
-      {/* <HeroPage /> */}
-      {/* hero compoenent */}
+      <Navbar />
       <div id="home" className="h-[110vh] w-full">
         <Image
           src="/ck-core.jpg"
@@ -25,9 +25,9 @@ export default function Home() {
           fill
         />
       </div>
-      {/* <div id="story">
+       <div id="story">
         <StoryComponent />
-      </div> */}
+      </div> 
       <div id="events">
         <EventSection />
       </div>
@@ -37,7 +37,9 @@ export default function Home() {
       <div id="sponsors">
         <SponsorsComponent />
       </div>
-      <Footer />
+      <div id="contact">
+        <Footer />
+      </div>
     </main>
   );
 }
