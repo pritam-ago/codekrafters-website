@@ -78,7 +78,7 @@ const divisions = [
     id: 7,
     name: "Cybersecurity Team",
     quote: "Protecting our digital assets and information.",
-    images: ["/images/Dhanush-Adithyan.png", "/images/Rishit.png", "/images/Adithya.png"],
+    images: ["/images/DhanushAdithyan.png", "/images/Rishit.png", "/images/Adithya.png"],
     members: [
       { name: "Dhanush Adithyan", designation: "Head" },
       { name: "Archangel", designation: "Head" },

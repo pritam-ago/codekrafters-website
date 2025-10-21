@@ -29,37 +29,35 @@ const HeroPage = () => {
   const whiteOpacity = useTransform(scrollYProgress, [0.8, 1], [0, 1]);
 
   return (
-    <div className="h-[150vh] bg-black">
-      {/* outer image */}
-      <motion.div
-        className="fixed inset-0 h-screen w-screen bg-[url('/CK_group.png')] bg-fixed bg-cover"
-        style={{
-          scale: imageScale,
-          opacity: outerImageOpacity,
-        }}
-      ></motion.div>
-
-      {/* mask image */}
-      <motion.div
-        className="fixed flex m-auto h-full w-full inset-0 [mask-image:url('/ck_logo.svg')] [mask-repeat:no-repeat]"
-        style={{
-          maskSize: useMotionTemplate`${maskSize}px`,
-          maskPosition: useMotionTemplate`center ${maskPosition}px`,
-        }}
-      >
-        {/* inner image */}
+    <div className="h-[150vh] bg-[#F2F2F2] flex items-center justify-center">
+      <div className="relative z-10 max-w-3xl w-full mx-auto p-6 rounded-3xl shadow-lg bg-[#F2A516] flex items-center justify-center">
+        {/* outer image */}
         <motion.div
+          className="h-[60vh] w-full bg-[url('/CK_group.png')] bg-cover bg-center rounded-2xl"
           style={{
             scale: imageScale,
+            opacity: outerImageOpacity,
           }}
-          className="fixed inset-0 h-full w-full bg-[url('/CK_group.png')] bg-fixed bg-cover"
-        ></motion.div> 
-
-        <motion.div style={{
-          opacity: whiteOpacity,
-        }}
-         className="fixed inset-0 h-full w-full bg-white"></motion.div>
-      </motion.div>
+        ></motion.div>
+        {/* mask image overlay */}
+        <motion.div
+          className="absolute inset-0 h-full w-full [mask-image:url('/ck_logo.svg')] [mask-repeat:no-repeat] pointer-events-none"
+          style={{
+            maskSize: useMotionTemplate`${maskSize}px`,
+            maskPosition: useMotionTemplate`center ${maskPosition}px`,
+            opacity: 0.7,
+          }}
+        >
+          <motion.div
+            style={{ scale: imageScale }}
+            className="h-full w-full bg-[url('/CK_group.png')] bg-cover bg-center rounded-2xl"
+          ></motion.div>
+          <motion.div
+            style={{ opacity: whiteOpacity }}
+            className="absolute inset-0 h-full w-full bg-white rounded-2xl"
+          ></motion.div>
+        </motion.div>
+      </div>
     </div>
   );
 };
